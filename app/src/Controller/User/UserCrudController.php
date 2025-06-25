@@ -23,7 +23,7 @@ final class UserCrudController extends AbstractController
         private DtoValidator $dtoValidator)
     {}
 
-    #[Route(name: 'app_user_crud_index', methods: ['GET'])]
+    #[Route('/list', name: 'app_user_crud_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
         $filterDto = new UserFilterDto(
