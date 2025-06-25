@@ -1,16 +1,22 @@
 <?php
 namespace App\EventSuscriber;
 
+use App\Exception\BusinessException;
+use App\Service\RedirectUrlResolver;
 use App\Exception\ValidationException;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ValidationExceptionSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private RouterInterface $router)
+    public function __construct(
+        private RouterInterface $router,
+        private RedirectUrlResolver $redirectUrlResolver)
     {
     }
 
@@ -24,38 +30,70 @@ class ValidationExceptionSubscriber implements EventSubscriberInterface
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
+        $request = $event->getRequest();
 
-        if (!$exception instanceof ValidationException) {
+        if ($exception instanceof ValidationException) {
+            $response = $this->handleValidationException($exception, $request);
+            $event->setResponse($response);
             return;
         }
 
-        $request = $event->getRequest();
+        if ($exception instanceof BusinessException) {
+            $response = $this->handleBusinessException($exception, $request);
+            $event->setResponse($response);
+            return;
+        }
+    }
 
+    
+    private function handleValidationException(ValidationException $exception, Request $request): Response
+    {
         $messages = [];
         foreach ($exception->getViolations() as $violation) {
             $messages[] = $violation->getPropertyPath() . ': ' . $violation->getMessage();
         }
 
-        if ($request->isXmlHttpRequest() || 0 === strpos($request->headers->get('Content-Type', ''), 'application/json')) {
-            // Respuesta JSON para peticiones API
-            $response = new JsonResponse([
+        if ($this->isApiRequest($request)) {
+            return new JsonResponse([
                 'error' => 'Validation failed',
                 'details' => $messages,
             ], 400);
-        } else {
-            // Petición HTML: flash message y redirección
-            $session = $request->getSession();
-            if ($session) {
-                if (!$session->isStarted()) {
-                    $session->start();
-                }
-                $session->getFlashBag()->add('error', implode('<br>', $messages));
-            }
-
-            $url = $this->router->generate('app_user_crud_index');
-            $response = new RedirectResponse($url);
         }
 
-        $event->setResponse($response);
+        $session = $request->getSession();
+        if ($session && !$session->isStarted()) {
+            $session->start();
+        }
+        $session->getFlashBag()->add('error', implode('<br>', $messages));
+
+        $redirectUrl = $this->redirectUrlResolver->__invoke($request);
+        return new RedirectResponse($redirectUrl);
+    }
+
+    private function handleBusinessException(BusinessException $exception, Request $request): Response
+    {
+        $message = $exception->getMessage();
+
+        if ($this->isApiRequest($request)) {
+            return new JsonResponse([
+                'error' => 'Business error',
+                'details' => $message,
+            ], 422);
+        }
+
+        $session = $request->getSession();
+        if ($session && !$session->isStarted()) {
+            $session->start();
+        }
+        $session->getFlashBag()->add('error', $message);
+
+        $redirectUrl = $this->redirectUrlResolver->__invoke($request);
+        return new RedirectResponse($redirectUrl);
+    }
+
+    private function isApiRequest(Request $request): bool
+    {
+        return $request->isXmlHttpRequest()
+            || 0 === strpos($request->headers->get('Content-Type', ''), 'application/json');
     }
 }
