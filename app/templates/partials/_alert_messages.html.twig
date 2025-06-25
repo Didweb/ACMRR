@@ -1,0 +1,15 @@
+{% for label, messages in app.flashes %}
+    {% set alert_class = {
+        'success': 'alert-success',
+        'error': 'alert-danger',
+        'warning': 'alert-warning',
+        'info': 'alert-info'
+    }[label]|default('alert-secondary') %}
+
+    <div class="alert {{ alert_class }} alert-dismissible fade show" role="alert">
+        {% for message in messages %}
+            <div>{{ message }}</div>
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}

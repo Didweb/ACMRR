@@ -1,0 +1,16 @@
+.main-container {
+    display: flex;
+    min-height: 100vh; /* para que tome toda la altura */
+}
+.content-area {
+    flex: 1;
+    padding: 1rem;
+}
+.sidebar {
+    width: 250px;
+    background: #f8f9fa;
+    border-left: 1px solid #ddd;
+}
+.hover-effect:hover {
+    color: #05357e !important; 
+}

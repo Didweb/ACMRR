@@ -1,0 +1,29 @@
+# Ignorar configuraciones locales
+app/.idea/
+app/.vscode/
+
+###> symfony/framework-bundle ###
+app/.env
+app/.env.dev
+app/.env.local
+app/.env.local.php
+app/.env.*.local
+app/config/secrets/prod/prod.decrypt.private.php
+app/public/bundles/
+app/var/
+app/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+app/phpunit.xml
+app/.phpunit.cache/
+###< phpunit/phpunit ###
+
+###> symfony/asset-mapper ###
+app/public/assets/
+app/assets/vendor/
+###< symfony/asset-mapper ###
+
+###> lexik/jwt-authentication-bundle ###
+app/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###

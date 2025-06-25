@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Usuario{% endblock %}
+
+{% block body %}
+    <div class="container my-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="h3">Detalle del Usuario</h1>
+        </div>
+        <div class="col text-end">
+            <a href="{{ path('app_user_crud_index') }}" class="btn btn-secondary">← Volver al listado</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table table-bordered align-middle mb-0">
+                        <tbody>
+                            <tr>
+                                <th scope="row" style="width: 150px;">ID</th>
+                                <td>{{ user.id }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Email</th>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Nombre</th>
+                                <td>{{ user.name }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Roles</th>
+                                <td>
+                                    {% if user.roles is not empty %}
+                                        {{ user.roles
+                                            | map(role => {
+                                                'ROLE_SUPER_ADMIN': 'Admin',
+                                                'ROLE_COLLABORATOR': 'Colaborador',
+                                                'ROLE_USER': 'Usuario'
+                                            }[role] ?? role)
+                                            | join(', ')
+                                        }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col d-flex gap-2">
+            <a href="{{ path('app_user_crud_edit', {'id': user.id}) }}" class="btn btn-primary">Editar</a>
+
+                {{ include('user_crud/_delete_form.html.twig') }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
