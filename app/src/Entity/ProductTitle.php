@@ -45,4 +45,30 @@ class ProductTitle
 
         return $this;
     }
+
+    public function getEditions(): Collection
+    {
+        return $this->editions;
+    }
+
+    public function addEdition(ProductEdition $edition): self
+    {
+        if (!$this->editions->contains($edition)) {
+            $this->editions[] = $edition;
+            $edition->setTitle($this); 
+        }
+
+        return $this;
+    }
+
+    public function removeEdition(ProductEdition $edition): self
+    {
+        if ($this->editions->removeElement($edition)) {
+            if ($edition->getTitle() === $this) {
+                $edition->setTitle(null); 
+            }
+        }
+
+        return $this;
+    }
 }
