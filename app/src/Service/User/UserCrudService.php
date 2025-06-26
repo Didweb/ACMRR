@@ -3,8 +3,6 @@ namespace App\Service\User;
 
 use App\Entity\User;
 use App\DTO\User\UserDto;
-use App\Utils\ExceptionHelper;
-use App\Utils\ViolationHelper;
 use App\DTO\User\UserDeleteDto;
 use App\DTO\User\UserFilterDto;
 use App\DTO\User\UserListItemDto;
@@ -15,7 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Knp\Component\Pager\Pagination\PaginationInterface;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 

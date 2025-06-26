@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\Utils\JsonResponseFactory;
 
 class ValidationExceptionSubscriber implements EventSubscriberInterface
 {
@@ -54,10 +55,7 @@ class ValidationExceptionSubscriber implements EventSubscriberInterface
         }
 
         if ($this->isApiRequest($request)) {
-            return new JsonResponse([
-                'error' => 'Validation failed',
-                'details' => $messages,
-            ], 400);
+            return JsonResponseFactory::error($messages);
         }
 
         $session = $request->getSession();
@@ -75,10 +73,7 @@ class ValidationExceptionSubscriber implements EventSubscriberInterface
         $message = $exception->getMessage();
 
         if ($this->isApiRequest($request)) {
-            return new JsonResponse([
-                'error' => 'Business error',
-                'details' => $message,
-            ], 422);
+            return JsonResponseFactory::error($message);
         }
 
         $session = $request->getSession();
