@@ -3,12 +3,15 @@ namespace App\Tests\Service\User;
 
 use App\Entity\User;
 use App\DTO\User\UserDto;
+use App\DTO\User\UserDeleteDto;
 use PHPUnit\Framework\TestCase;
 use App\Exception\BusinessException;
+use App\DTO\User\UserDeleteOutputDto;
 use App\Service\User\UserCrudService;
 use App\Repository\User\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -130,5 +133,77 @@ class UserCrudServiceTest  extends TestCase
             ->willReturn($existingUser);
 
         $this->userService->create($userDto);
+    }
+
+    public function testDeleteSuccess(): void
+    {
+        $userId = 42;
+        $csrfToken = 'valid_token';
+        $expectedTokenId = 'delete' . $userId;
+
+        $user = $this->createMock(User::class);
+        $dto = new UserDeleteDto($userId, $csrfToken);
+
+        $this->userRepository->expects($this->once())
+            ->method('find')
+            ->with($userId)
+            ->willReturn($user);
+
+        $this->csrfTokenManager->expects($this->once())
+            ->method('isTokenValid')
+            ->with($this->callback(function (CsrfToken $token) use ($expectedTokenId, $csrfToken) {
+                return $token->getId() === $expectedTokenId && $token->getValue() === $csrfToken;
+            }))
+            ->willReturn(true);
+
+        $this->em->expects($this->once())->method('remove')->with($user);
+        $this->em->expects($this->once())->method('flush');
+
+        $result = $this->userService->delete($dto);
+
+        $this->assertInstanceOf(UserDeleteOutputDto::class, $result);
+        $this->assertTrue($result->success);
+    }
+
+    public function testDeleteFailsWhenUserNotFound(): void
+    {
+        $userId = 42;
+        $csrfToken = 'any_token';
+        $dto = new UserDeleteDto($userId, $csrfToken);
+
+        $this->userRepository->expects($this->once())
+            ->method('find')
+            ->with($userId)
+            ->willReturn(null);
+
+        $this->expectException(BusinessException::class);
+
+        $this->userService->delete($dto);
+    }
+
+    public function testDeleteFailsWhenCsrfInvalid(): void
+    {
+        $userId = 42;
+        $csrfToken = 'invalid_token';
+        $expectedTokenId = 'delete' . $userId;
+
+        $user = $this->createMock(User::class);
+        $dto = new UserDeleteDto($userId, $csrfToken);
+
+        $this->userRepository->expects($this->once())
+            ->method('find')
+            ->with($userId)
+            ->willReturn($user);
+
+        $this->csrfTokenManager->expects($this->once())
+            ->method('isTokenValid')
+            ->with($this->callback(function (CsrfToken $token) use ($expectedTokenId, $csrfToken) {
+                return $token->getId() === $expectedTokenId && $token->getValue() === $csrfToken;
+            }))
+            ->willReturn(false); 
+
+        $this->expectException(BusinessException::class);
+
+        $this->userService->delete($dto);
     }
 }
