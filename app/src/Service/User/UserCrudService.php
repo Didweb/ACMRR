@@ -3,19 +3,16 @@ namespace App\Service\User;
 
 use App\Entity\User;
 use App\DTO\User\UserDto;
-use App\Utils\ViolationHelper;
 use App\DTO\User\UserDeleteDto;
 use App\DTO\User\UserFilterDto;
 use App\DTO\User\UserListItemDto;
+use App\Exception\BusinessException;
 use App\DTO\User\UserDeleteOutputDto;
-use App\Exception\ValidationException;
 use App\Repository\User\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Validator\ConstraintViolation;
 use Knp\Component\Pager\Pagination\PaginationInterface;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -53,12 +50,9 @@ class UserCrudService
     public function create(UserDto $userDto): UserDto
     {
 
-        $violations = new ConstraintViolationList();
-
         if ($this->userRepository->findOneBy(['email' => $userDto->email])) {
-            ViolationHelper::add($violations, 'Email Duplicate.', 'email', $userDto->email);
+            throw new BusinessException('Error al crear usuario. Email Duplicado, ya existente en la base de datos.');
         }
-
 
         try {
             $user = new User();
@@ -76,11 +70,8 @@ class UserCrudService
             $this->em->flush();
 
         } catch(\Exception $e) {
-            ViolationHelper::add($violations, $e->getMessage(), $e->getCode(), $userDto->email);
+            throw new BusinessException('Error al crear usuario. Error en la presistencia.');
         }
-
-
-        ViolationHelper::result($violations);
 
         return new UserDto(
                 id: $user->getId(),
@@ -94,19 +85,16 @@ class UserCrudService
     {
         $expectedTokenId = 'delete'.$userDeleteDto->userId;
 
-        $violations = new ConstraintViolationList();
 
         $user = $this->userRepository->find($userDeleteDto->userId);
 
         if (!$user) {
-            ViolationHelper::add($violations, 'User not found.', 'userId', $userDeleteDto->userId);
+            throw new BusinessException('Error al eliminar usuario. El usuario no existe.');
         }
 
         if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($expectedTokenId, $userDeleteDto->csrfToken))) {
-            ViolationHelper::add($violations, 'Invalid CSRF token.', 'csrfToken', $userDeleteDto->csrfToken);
+            throw new BusinessException('Error al eliminar usuario. CSRF Invalido');
         }
-
-        ViolationHelper::result($violations);
 
         $this->em->remove($user);
         $this->em->flush();
