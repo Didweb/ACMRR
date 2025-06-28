@@ -1,0 +1,165 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar ProductTitle{% endblock %}
+
+{% block body %}
+
+<div class="container my-5">
+  <div class="card shadow rounded-4">
+    <div class="card-body p-4">
+      <h2 class="mb-4">Editar Producto</h2>
+
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" id="productTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="title-tab" data-bs-toggle="tab" data-bs-target="#title" type="button" role="tab" aria-controls="title" aria-selected="true">
+            Product Title
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="edictions-tab" data-bs-toggle="tab" data-bs-target="#edictions" type="button" role="tab" aria-controls="edictions" aria-selected="false">
+            Ediciones e Ítems Usados
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab content -->
+      <div class="tab-content mt-4" id="productTabsContent">
+        <!-- Pestaña 1: Product Title -->
+        <div class="tab-pane fade show active" id="title" role="tabpanel" aria-labelledby="title-tab">
+          {{ include('product/product_crud/partials/edit_product_title.html.twig') }}
+        </div>
+
+        <!-- Pestaña 2: Ediciones + Items Usados -->
+        <div class="tab-pane fade" id="edictions" role="tabpanel" aria-labelledby="edictions-tab">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Ediciones del Producto</h5>
+            {# <a href="#" class="btn btn-sm btn-success"> #}
+            <a href="#"  id="btn-add-edition"  class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddEdiction"
+            data-titleid = {productTitle.id} 
+                        data-ajaxaddedition="{{ path('app_product_edition_crud_new', {'titleId' : productTitle.id}) }}">
+            Añadir Edición</a>
+          </div>
+
+          <div class="accordion" id="accordionEdictions">
+
+
+          {% for edition in productTitle.editions %}
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                  data-bs-target="#collapseOne{{edition.id}}" aria-expanded="false" aria-controls="collapseOne{{edition.id}}">
+                  {{edition.label.name}} - {{edition.year}} 
+                </button>
+              </h2>
+              <div id="collapseOne{{edition.id}}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionEdictions{{edition.id}}">
+                <div class="accordion-body">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <strong>Ítems Usados de Edición A</strong>
+                    <a href="#" class="btn btn-sm btn-outline-success">Añadir Ítem Usado</a>
+                  </div>
+                  <table class="table table-sm table-striped">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Format</th>
+                        <th>Código de barras</th>
+                        <th>Udes.</th>
+                        <th>Udes. 2ª mano</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>x</td>
+                        <td>x</td>
+                        <td>x</td>
+                        <td>x</td>
+                        <td>x</td>
+                        <td>
+                          <a href="#" class="btn btn-sm btn-primary">Editar</a>
+                          <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          {% endfor %}
+           
+          </div> <!-- /accordion -->
+
+        </div> <!-- /tab-pane -->
+      </div> <!-- /tab-content -->
+
+    </div> <!-- /card-body -->
+  </div> <!-- /card -->
+</div> <!-- /container -->
+
+
+ {{ include('product/product_crud/modals/modal_add_edition.html.twig') }}
+
+
+
+
+{# 
+<div class="container">
+    <div class="row justify-content-center" style="margin-top: 20px;">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1>Editar Producto</h1>
+
+
+                    <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="title-tab" data-bs-toggle="tab" data-bs-target="#title" type="button" role="tab" aria-controls="title" aria-selected="true">
+                        Título
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="edictions-tab" data-bs-toggle="tab" data-bs-target="#edictions" type="button" role="tab" aria-controls="edictions" aria-selected="false">
+                        Ediciones
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="items-tab" data-bs-toggle="tab" data-bs-target="#items" type="button" role="tab" aria-controls="items" aria-selected="false">
+                        Unidades 2ª Mano
+                        </button>
+                    </li>
+                    </ul>
+
+        
+                    <div class="tab-content mt-4" id="productTabsContent">
+                            <div class="tab-pane fade show active" id="title" role="tabpanel" aria-labelledby="title-tab">
+                                {% include 'partials/_alert_messages.html.twig' %}
+                            <div class="mb-4">
+                                {{ include('product/product_crud/_form.html.twig', {'button_label': 'Update'}) }}
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ path('app_product_crud_index') }}" class="btn btn-outline-primary">← Volver al listado Productos</a>
+
+                                {{ include('product/product_crud/_delete_form.html.twig') }}
+                            </div>
+
+
+                            <div class="tab-pane fade" id="edictions" role="tabpanel" aria-labelledby="edictions-tab">
+                            EDICIONES
+                            </div>
+
+
+                            <div class="tab-pane fade" id="items" role="tabpanel" aria-labelledby="items-tab">
+                            ITEMS
+                            </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div> #}
+
+{% endblock %}

@@ -34,4 +34,9 @@ class ProductFormat
     {
         return $this->value;
     }
+
+    public static function choices(): array
+    {
+        return array_map(fn(string $format) => new self($format), self::VALID_FORMATS);
+    }
 }

@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Artist index{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    {% include 'partials/_alert_messages.html.twig' %}
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="h3">Artist index</h1>
+       </div>
+        <div class="col text-end">
+            <a href="{{ path('app_artist_crud_new') }}" class="btn btn-primary">+ Nuevo Artista</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead  class="table-light">
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for artist in pagination %}
+                            <tr>
+                                <td>{{ artist.id }}</td>
+                                <td>{{ artist.name }}</td>
+                                <td>
+                                    <a href="{{ path('app_artist_crud_show', {'id': artist.id}) }}"  class="btn btn-sm btn-outline-secondary">Ver</a>
+                                    <a href="{{ path('app_artist_crud_edit', {'id': artist.id}) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3">No hay Artistas registrados.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                <div class="navigation mt-3  d-flex justify-content-end">
+                    {{ knp_pagination_render(pagination) }}
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>   
+{% endblock %}

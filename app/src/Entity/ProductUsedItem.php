@@ -19,7 +19,10 @@ class ProductUsedItem
     private ProductBarcode $barcode; 
 
     #[ORM\Column(type:"product_status", length:10)]
-    private ProductStatus $condition;
+    private ProductStatus $conditionVinyl;
+
+    #[ORM\Column(type:"product_status", length:10)]
+    private ProductStatus $conditionFolder;
 
     #[ORM\Column(type:"float")]
     private float $price;   
@@ -48,18 +51,6 @@ class ProductUsedItem
         return $this;
     }
 
-    public function getCondition(): ProductStatus
-    {
-        return $this->condition;
-    }
-
-    public function setCondition(ProductStatus $condition): self
-    {
-        $this->condition = $condition;
-
-        return $this;
-    }
-
     public function getPrice(): float
     {
         return $this->price;
@@ -80,6 +71,43 @@ class ProductUsedItem
     public function setBarcode(ProductBarcode $barcode): self
     {
         $this->barcode = $barcode;
+
+        return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'barcode' => $this->getBarcode()->value(),
+            'conditionVinyl' => $this->getConditionVinyl()->getValue(),
+            'conditionFolder' => $this->getConditionFolder()->getValue(),
+            'price' => $this->getPrice(),
+        ];
+    }
+
+    public function getConditionVinyl(): ProductStatus
+    {
+        return $this->conditionVinyl;
+    }
+
+    
+    public function setConditionVinyl(ProductStatus $conditionVinyl): self
+    {
+        $this->conditionVinyl = $conditionVinyl;
+
+        return $this;
+    }
+
+    public function getConditionFolder(): ProductStatus
+    {
+        return $this->conditionFolder;
+    }
+
+
+    public function setConditionFolder(ProductStatus $conditionFolder): self
+    {
+        $this->conditionFolder = $conditionFolder;
 
         return $this;
     }

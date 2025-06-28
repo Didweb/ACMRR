@@ -55,7 +55,7 @@ class RecordLabelCrudService
         } catch(\Exception $e) {
             throw new BusinessException('Error al crear Sello. Error en la presistencia.');
         }
-
+       
         return new RecordLabelDto(
                 id: $recordLabel->getId(),
                 name: $recordLabel->getName()

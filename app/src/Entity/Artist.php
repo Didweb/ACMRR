@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Artist
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type:"integer")]
-    private int $id;
+    private ?int $id;
 
     #[ORM\Column(type:"string", length:255)]
     private string $name;
@@ -27,12 +27,12 @@ class Artist
         $this->productEditions = new ArrayCollection();
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(?int $id): self
     {
         $this->id = $id;
 
@@ -94,5 +94,13 @@ class Artist
             $track->removeArtist($this);
         }
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+        ];
     }
 }

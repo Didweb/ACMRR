@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class ProductEdition
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type:"integer")]
-    private int $id;
+    private ?int $id  = null;
 
     #[ORM\ManyToOne(targetEntity: ProductTitle::class, inversedBy: "editions")]
     #[ORM\JoinColumn(nullable: false)]
@@ -28,10 +28,13 @@ class ProductEdition
     private ProductFormat $format;
 
     #[ORM\Column(type:"product_barcode", length:100, nullable:true)]
-    private ProductBarcode $barcode; 
+    private ?ProductBarcode $barcode = null; 
 
     #[ORM\Column(type:"integer")]
     private int $stockNew = 0; 
+
+    #[ORM\Column(type:"float")]
+    private float $priceNew;   
 
     #[ORM\OneToMany(mappedBy:"edition", targetEntity:ProductUsedItem::class, cascade:["persist", "remove"], orphanRemoval: true)]
     private Collection $productUsedItems;
@@ -50,12 +53,12 @@ class ProductEdition
         $this->productUsedItems = new ArrayCollection();
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(?int $id): self
     {
         $this->id = $id;
 
@@ -109,12 +112,12 @@ class ProductEdition
         return $this;
     }
 
-    public function getBarcode(): ProductBarcode
+    public function getBarcode(): ?ProductBarcode
     {
         return $this->barcode;
     }
 
-    public function setBarcode(ProductBarcode $barcode): self
+    public function setBarcode(?ProductBarcode $barcode): self
     {
         $this->barcode = $barcode;
 
@@ -206,4 +209,44 @@ class ProductEdition
         return $this;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => [
+                'id' => $this->title?->getId(),
+                'name' => $this->title?->getName(),
+            ],
+            'label' => $this->label->getName(),
+            'year' => $this->year,
+            'format' => (string) $this->format,
+            'barcode' => (string) $this->barcode,
+            'stockNew' => $this->stockNew,
+            'priceNew' => $this->priceNew,
+            'productUsedItems' => array_map(
+                fn(ProductUsedItem $item) => $item->toArray(),
+                $this->productUsedItems->toArray()
+            ),
+            'artists' => array_map(
+                fn(Artist $artist) => $artist->toArray(),
+                $this->artists->toArray()
+            ),
+            'tracks' => array_map(
+                fn(Track $track) => $track->toArray(),
+                $this->tracks->toArray()
+            ),
+        ];
+    }
+
+    public function getPriceNew(): float
+    {
+        return $this->priceNew;
+    }
+
+    public function setPriceNew(float $priceNew): self
+    {
+        $this->priceNew = $priceNew;
+
+        return $this;
+    }
 }
