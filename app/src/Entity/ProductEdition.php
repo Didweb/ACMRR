@@ -46,8 +46,12 @@ class ProductEdition
     #[ORM\OneToMany(mappedBy: "productEdition", targetEntity: Track::class, cascade: ["persist", "remove"])]
     private Collection $tracks;
 
+    #[ORM\OneToMany(mappedBy: 'productEdition', targetEntity: ProductImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $images;
+
     public function __construct()
     {
+        $this->images = new ArrayCollection();
         $this->tracks = new ArrayCollection();
         $this->artists = new ArrayCollection();
         $this->productUsedItems = new ArrayCollection();
@@ -209,6 +213,25 @@ class ProductEdition
         return $this;
     }
 
+    public function addImage(ProductImage $image): void
+    {
+        $this->images[] = $image;
+        $image->setProductEdition($this);
+    }
+
+    public function removeImage(ProductImage $image): void
+    {
+        $this->images->removeElement($image);
+        if ($image->getProductEdition() === $this) {
+            $image->setProductEdition(null);
+        }
+    }
+
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
     public function toArray(): array
     {
         return [
@@ -223,6 +246,7 @@ class ProductEdition
             'barcode' => (string) $this->barcode,
             'stockNew' => $this->stockNew,
             'priceNew' => $this->priceNew,
+            'images' => $this->getImages(),
             'productUsedItems' => array_map(
                 fn(ProductUsedItem $item) => $item->toArray(),
                 $this->productUsedItems->toArray()

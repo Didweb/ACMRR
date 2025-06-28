@@ -25,7 +25,8 @@ class ProductEditionCrudService
         private RecordLabelRepository $recordLabelRepository,
         private ArtistRepository $artistRepository,
         private EntityManagerInterface $em,
-        private CsrfTokenManagerInterface $csrfTokenManager) 
+        private CsrfTokenManagerInterface $csrfTokenManager,
+        private BarcodeImageGenerator $barcodeGenerator) 
     {}
 
     public function create(ProductEditionDto $productEditionDto): ProductEditionDto
@@ -97,7 +98,10 @@ class ProductEditionCrudService
         $productEdition->setLabel($label);
         $productEdition->setYear($productEditionDto->year);
         $productEdition->setFormat(new ProductFormat($productEditionDto->format));
+        
         $productEdition->setBarcode($barcode);
+        $this->barcodeGenerator->saveBarcodeToFile($barcode);
+
         $productEdition->setStockNew($productEditionDto->stockNew);
         $productEdition->setPriceNew($productEditionDto->priceNew);
 

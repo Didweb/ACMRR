@@ -4,6 +4,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\ValueObject\Product\ProductStatus;
 use App\ValueObject\Product\ProductBarcode;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity]
 class ProductUsedItem
@@ -26,6 +28,14 @@ class ProductUsedItem
 
     #[ORM\Column(type:"float")]
     private float $price;   
+
+    #[ORM\OneToMany(mappedBy: 'productItemUsed', targetEntity: ProductImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $images;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -83,6 +93,7 @@ class ProductUsedItem
             'conditionVinyl' => $this->getConditionVinyl()->getValue(),
             'conditionFolder' => $this->getConditionFolder()->getValue(),
             'price' => $this->getPrice(),
+            'images' => $this->getImages(),
         ];
     }
 
@@ -104,11 +115,29 @@ class ProductUsedItem
         return $this->conditionFolder;
     }
 
-
     public function setConditionFolder(ProductStatus $conditionFolder): self
     {
         $this->conditionFolder = $conditionFolder;
 
         return $this;
+    }
+
+    public function addImage(ProductImage $image): void
+    {
+        $this->images[] = $image;
+        $image->getProductUsedItem($this);
+    }
+
+    public function removeImage(ProductImage $image): void
+    {
+        $this->images->removeElement($image);
+        if ($image->getProductUsedItem() === $this) {
+            $image->getProductUsedItem(null);
+        }
+    }
+
+    public function getImages(): Collection
+    {
+        return $this->images;
     }
 }
