@@ -118,3 +118,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
+
+
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('deleteProductEdition')) {
+    const btn = e.target;
+    const ajaxDeleteProductEdition = btn.dataset.ajaxdeleteproductedition;
+    const productEditionId = btn.dataset.producteditionid;
+
+    if (!confirm('¿Quieres eliminar esta edición?')) {
+      return;
+    }
+
+    fetch(ajaxDeleteProductEdition, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+
+      if (data.success) {
+        const container = document.getElementById('block-'+data.data.id);
+        if (container) {
+            container.remove();
+        }
+
+      } else {
+        alert('Error al eliminar imagen: ' + (data.message || 'Error desconocido'));
+      }
+    })
+    .catch(err => {
+      console.error('Error en la petición de eliminar imagen:', err);
+      alert('Error en la petición al servidor.');
+    });
+  }
+});

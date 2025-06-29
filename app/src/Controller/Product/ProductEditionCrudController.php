@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Service\Product\ProductEditionCrudService;
+use App\Utils\JsonResponseFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/product/crud/edition')]
@@ -33,6 +34,7 @@ class ProductEditionCrudController extends AbstractController
 
         return $this->render('product/product_crud/product_edition/_form.html.twig', [
             'formEdition' => $form->createView(),
+            'isEdit' => null
         ]);
     }
 
@@ -77,5 +79,18 @@ class ProductEditionCrudController extends AbstractController
             'isEdit' => $isEdit,
             'productEdition' => $productEdition
         ]);
+    }
+
+
+    #[Route('/delete/{id}', name: 'app_product_edition_crud_delete', methods: ['DELETE'])]
+    public function delete(int $id, Request $request): Response
+    {
+        $productEdition = $this->productEditCrudService->findProductEdition($id);
+        
+        $productEditionDto = ProductEditionDto::fromEntity($productEdition);
+
+        $this->productEditCrudService->delete($productEditionDto);
+
+        return JsonResponseFactory::success(['id' => $productEdition->getTitle()->getId()]);
     }
 }

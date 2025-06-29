@@ -73,6 +73,23 @@ class ProductEditionCrudService
         return  ProductEditionDto::fromEntity($productEdition);
     }
 
+    public function delete($productEditionDto): void
+    {
+        $productEdition = $this->findProductEdition($productEditionDto->id);
+
+        if (!$productEdition) {
+            throw new BusinessException('El Product Edition no se encuentra. En Delete Product Edition.');
+        }
+
+        try {
+            $this->em->remove($productEdition);
+            $this->em->flush();
+            
+        } catch(\Exception $e) {
+             throw new BusinessException('En Delete Product Edition. Message: '.$e->getMessage());
+        }
+    }
+
     public function findProductEdition(int $id): ProductEdition
     {
         $productEdition = $this->productEditionRepository->find(['id' => $id]);
