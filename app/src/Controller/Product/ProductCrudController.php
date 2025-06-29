@@ -17,7 +17,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/admin/product/crud')]
 final class ProductCrudController extends AbstractController
 {
-
     public function __construct(
         private ProductCrudService $productCrudService,
         private DtoValidator $dtoValidator)

@@ -23,12 +23,13 @@ document.addEventListener('click', (e) => {
     })
     .then(res => res.json())
     .then(data => {
+
       if (data.success) {
         const container = document.getElementById(imageId);
         if (container) {
             container.remove();
         }
-        console.log('Imagen eliminada correctamente');
+
       } else {
         alert('Error al eliminar imagen: ' + (data.message || 'Error desconocido'));
       }

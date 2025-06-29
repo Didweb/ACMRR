@@ -95,3 +95,64 @@ function handleImageChange(event) {
         console.error('Error AJAX', err);
     });
 }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.open-edition-modal').forEach(button => {
+    button.addEventListener('click', function (e) {
+      e.preventDefault(); // Evita navegación si es un <a href="#">
+      const url = this.dataset.url;
+
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          document.querySelector('#modalEditionFormContent').innerHTML = html;
+
+          // Mostrar el modal
+          const modal = new bootstrap.Modal(document.getElementById('modalEditionForm'));
+          modal.show();
+        })
+        .catch(err => {
+          console.error('Error al cargar el formulario:', err);
+        });
+    });
+  });
+});
+
+
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('deleteProductEdition')) {
+    const btn = e.target;
+    const ajaxDeleteProductEdition = btn.dataset.ajaxdeleteproductedition;
+    const productEditionId = btn.dataset.producteditionid;
+
+    if (!confirm('¿Quieres eliminar esta edición?')) {
+      return;
+    }
+
+    fetch(ajaxDeleteProductEdition, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+
+      if (data.success) {
+        const container = document.getElementById('block-'+data.data.id);
+        if (container) {
+            container.remove();
+        }
+
+      } else {
+        alert('Error al eliminar imagen: ' + (data.message || 'Error desconocido'));
+      }
+    })
+    .catch(err => {
+      console.error('Error en la petición de eliminar imagen:', err);
+      alert('Error en la petición al servidor.');
+    });
+  }
+});
