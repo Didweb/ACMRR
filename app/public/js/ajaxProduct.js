@@ -5,17 +5,16 @@ document.querySelector('#btn-add-edition').addEventListener('click', function ()
     fetch(ajaxAddEdition)
         .then(response => response.text())
         .then(html => {
-            // Inyecta el HTML en el body del modal
+    
             document.querySelector('#modal-edition-body').innerHTML = html;
 
-            // Abre el modal
             const modalElement = document.getElementById('modalAddEdiction');
             const modal = new bootstrap.Modal(modalElement);
             modal.show();
         });
 });
 
-// Solo inicializa Select2 cuando el modal está completamente visible
+
 $(document).on('shown.bs.modal', '#modalAddEdiction', function () {
     console.log('Modal abierto: inicializando select2');
 
@@ -36,3 +35,63 @@ $(document).on('shown.bs.modal', '#modalAddEdiction', function () {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('input[type="file"][data-ajaxaddimage]').forEach(input => {
+    input.addEventListener('change', (event) => {
+      handleImageChange(event);
+    });
+  });
+});
+
+
+function handleImageChange(event) {
+    const input = event.target;
+    const file = input.files[0];
+    if (!file) return;
+
+    const entityName = input.dataset.entity;
+    const entityId = input.dataset.entityid;
+    const ajaxAddImage = input.dataset.ajaxaddimage;
+
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('entityName', entityName);
+    formData.append('entityId', entityId);
+
+    fetch(ajaxAddImage, {
+        method: 'POST',
+        body: formData,
+        headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+        console.log('Imagen subida correctamente');
+        const images = data.data.all_images;
+
+        // selector para el div
+        const container = document.querySelector(`.showImages${entityId}`);
+
+        // vaciar contenido previo
+        container.innerHTML = '';
+
+        // iterar imágenes y añadir <img>
+        images.forEach(img => {
+            const imgElem = document.createElement('img');
+            imgElem.src = img.url;
+            imgElem.alt = img.filename;
+            imgElem.style.maxWidth = '150px'; // ejemplo tamaño
+            imgElem.style.margin = '5px';
+            container.appendChild(imgElem);
+        });
+        } else {
+        console.warn('Error al subir:', data.message);
+        }
+    })
+    .catch(err => {
+        console.error('Error AJAX', err);
+    });
+}

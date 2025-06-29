@@ -83,7 +83,8 @@ final class ProductCrudController extends AbstractController
             return $this->redirectToRoute('app_product_crud_index', [], Response::HTTP_SEE_OTHER);
         }
        
-      
+        $productTitle = $this->productCrudService->getProductTitleComplete($productTitle->getId());
+       
         return $this->render('product/product_crud/edit.html.twig', [
             'productTitle' => $productTitle,
             'form' => $form,

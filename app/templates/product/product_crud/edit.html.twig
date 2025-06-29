@@ -7,6 +7,7 @@
 <div class="container my-5">
   <div class="card shadow rounded-4">
     <div class="card-body p-4">
+    {% include 'partials/_alert_messages.html.twig' %}
       <h2 class="mb-4">Editar Producto</h2>
 
       <!-- Nav tabs -->
@@ -53,14 +54,44 @@
                 </button>
               </h2>
               <div id="collapseOne{{edition.id}}" class="accordion-collapse collapse" aria-labelledby="headingOne{{edition.id}}" 
-                      data-bs-parent="#accordionEdictions{{edition.id}}">
+                      data-bs-parent="#accordionEdictions">
                 <div class="accordion-body">
                   <div class="d-flex justify-content-between align-items-center mb-2">
-
                     <img src="/barcodes/{{ edition.barcode }}.png" alt="Código de barras" />
+                    <div class="mb-3">
+                      <button type="button" class="btn btn-outline-primary" 
+                        onclick="document.getElementById('productImageInput{{edition.id}}').click()">
+                        <i class="bi bi-images"></i><i class="bi bi-plus"></i>
+                      </button>
+                       <input type="file" id="productImageInput{{edition.id}}" 
+                       data-entity="productEdition"
+                        data-entityid="{{edition.id}}"
+                        data-ajaxaddimage="{{ path('app_product_image_upload') }}"
+                       name="product_image" accept="image/*" class="d-none">
+                    </div>
+
                     <strong>Ítems Usados de Edición A</strong>
                     <a href="#" class="btn btn-sm btn-outline-success">Añadir Ítem Usado</a>
                   </div>
+
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="showImages{{edition.id}}">
+                      {% for image in edition.getImages() %}
+                       <div class="d-inline-flex align-items-center border rounded p-1" id="{{image.id}}" >
+                        <img src="{{image.getPath()}}" alt="Imagen: {{ image.getFilename()}}" class="imageProductEdition"
+                         class="img-thumbnail" style="max-width: 100px; height: auto;"/>
+                        <button type="button" 
+                                class="btn btn-sm btn-danger ms-2 deleteImage"
+                                aria-label="Eliminar imagen"
+                                data-imageid="{{ image.id }}"
+                                data-ajaxdeleteimage="{{ path('app_product_image_delete', {'id': image.id})}}">
+                          &times;
+                        </button>
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+
                   <table class="table table-sm table-striped">
                     <thead>
                       <tr>

@@ -1,52 +1,41 @@
-//   $(document).ready(function() {
-//     $('.select2').select2({
-//       width: '100%',
-//       theme: 'bootstrap-5', 
-//       placeholder: 'Selecciona una opción',
-//       allowClear: true
-//     });
-//   });
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('deleteImage')) {
+    const btn = e.target;
+    const imageId = btn.dataset.imageid;
+    const ajaxDeleteImage = btn.dataset.ajaxdeleteimage;
 
-//   $('.select2').select2({
-//     width: '100%',
-//     placeholder: 'Selecciona una opción',
-//     allowClear: true,
-//     matcher: function(params, data) {
-//         if ($.trim(params.term) === '') {
-//             return data;
-//         }
+    if (!imageId) {
+      console.warn('No se encontró ID de la imagen');
+      return;
+    }
 
-//         if (typeof data.text === 'undefined') {
-//             return null;
-//         }
+    if (!confirm('¿Quieres eliminar esta imagen?')) {
+      return;
+    }
 
-//         // Forzar búsqueda básica sin acentos, etc.
-//         if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
-//             return data;
-//         }
-
-//         return null;
-//     }
-// });
-
-// $('.select2label').select2({
-//                     width: '100%',
-//                     placeholder: 'Selecciona una opción',
-//                     allowClear: true,
-//                     matcher: function(params, data) {
-//                         if ($.trim(params.term) === '') {
-//                             return data;
-//                         }
-
-//                         if (typeof data.text === 'undefined') {
-//                             return null;
-//                         }
-
-//                         if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
-//                             return data;
-//                         }
-
-//                         return null;
-//                     }
-//                 });
-
+    fetch(ajaxDeleteImage, {
+      method: 'DELETE',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        const container = document.getElementById(imageId);
+        if (container) {
+            container.remove();
+        }
+        console.log('Imagen eliminada correctamente');
+      } else {
+        alert('Error al eliminar imagen: ' + (data.message || 'Error desconocido'));
+      }
+    })
+    .catch(err => {
+      console.error('Error en la petición de eliminar imagen:', err);
+      alert('Error en la petición al servidor.');
+    });
+  }
+});

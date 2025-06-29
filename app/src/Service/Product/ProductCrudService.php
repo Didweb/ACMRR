@@ -82,4 +82,17 @@ class ProductCrudService
         }              
         return ProductTitleDto::fromEntity($productTitle);
     }
+
+    public function getProductTitleComplete(int $id): ProductTitle
+    {
+        
+        $productTitle = $this->productRepository->getComplet($id);
+
+        if(!$productTitle) {
+            throw new BusinessException('Error ProductTitle no encontrado.');
+        }
+
+        return $productTitle;
+                 
+    }
 }

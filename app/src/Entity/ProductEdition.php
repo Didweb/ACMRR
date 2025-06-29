@@ -246,7 +246,7 @@ class ProductEdition
             'barcode' => (string) $this->barcode,
             'stockNew' => $this->stockNew,
             'priceNew' => $this->priceNew,
-            'images' => $this->getImages(),
+            'images' => $this->getImagesArray(),
             'productUsedItems' => array_map(
                 fn(ProductUsedItem $item) => $item->toArray(),
                 $this->productUsedItems->toArray()
@@ -272,5 +272,16 @@ class ProductEdition
         $this->priceNew = $priceNew;
 
         return $this;
+    }
+
+    public function getImagesArray(): array
+    {
+        return $this->images->map(function(ProductImage $image) {
+            return [
+                'id' => $image->getId(),
+                'filename' => $image->getFilename(),
+                'url' => $image->getPath(),
+            ];
+        })->toArray();
     }
 }
