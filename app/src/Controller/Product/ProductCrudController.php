@@ -62,13 +62,6 @@ final class ProductCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_product_crud_show', methods: ['GET'])]
-    public function show(ProductTitle $productTitle): Response
-    {
-        return $this->render('product/product_crud/show.html.twig', [
-            'product_title' => $productTitle,
-        ]);
-    }
 
     #[Route('/{id}/edit', name: 'app_product_crud_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, ProductTitle $productTitle, EntityManagerInterface $entityManager): Response

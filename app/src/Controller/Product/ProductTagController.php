@@ -59,14 +59,6 @@ final class ProductTagController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_product_product_tag_show', methods: ['GET'])]
-    public function show(ProductTag $productTag): Response
-    {
-        return $this->render('product/product_tag/show.html.twig', [
-            'product_tag' => $productTag,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_product_product_tag_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, ProductTag $productTag, EntityManagerInterface $entityManager): Response
     {
