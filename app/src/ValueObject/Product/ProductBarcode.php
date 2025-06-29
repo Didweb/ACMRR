@@ -39,9 +39,16 @@ final class ProductBarcode
 
     public static function generate(string $prefix = '230'): self
     {
-        $random = $prefix . str_pad((string)random_int(0, 9999999), 9 - strlen($prefix), '0', STR_PAD_LEFT);
-        $checkDigit = self::calculateCheckDigit($random);
-        return new self($random . $checkDigit);
+        $randomLength = 12 - strlen($prefix);
+         if ($randomLength <= 0) {
+            throw new BusinessException('Prefix too long for EAN-13. Must be max 12 digits.');
+        }
+        
+        $randomPart = str_pad((string)random_int(0, (10 ** $randomLength) - 1), $randomLength, '0', STR_PAD_LEFT);
+        $base = $prefix . $randomPart;
+
+        $checkDigit = self::calculateCheckDigit($base);
+        return new self($base . $checkDigit);
     }
 
     private static function isValidEAN13(string $ean): bool

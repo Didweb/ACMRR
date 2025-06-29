@@ -10,6 +10,7 @@ app/.env.local.php
 app/.env.*.local
 app/config/secrets/prod/prod.decrypt.private.php
 app/public/bundles/
+app/public/barcodes/*.png
 app/var/
 app/vendor/
 ###< symfony/framework-bundle ###

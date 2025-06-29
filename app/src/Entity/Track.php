@@ -90,4 +90,16 @@ class Track
         $this->riddim = $riddim;
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'artists' => $this->artists->map(
+                fn(Artist $artist) => $artist->toArray()
+            )->toArray(),
+            'riddim' => $this->riddim?->getName(),
+        ];
+    }
 }

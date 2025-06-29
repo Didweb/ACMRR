@@ -5,7 +5,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/dashboard')]
+#[Route('/admin/dashboard')]
 class DasahboardController extends AbstractController
 {
     #[Route('/', name: 'app_home_dashboard')]
