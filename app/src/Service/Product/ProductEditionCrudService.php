@@ -59,13 +59,38 @@ class ProductEditionCrudService
         return  ProductEditionDto::fromEntity($productEdition);
     }
 
+    public function update(ProductEditionDto $productEditionDto): ProductEditionDto
+    {
+        $productEdition = $this->findProductEdition($productEditionDto->id);
+
+        try {
+            $this->em->persist($productEdition);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+                    throw new BusinessException('[save] Error al crear Producto Edition. Error en la presistencia.'.$e->getMessage());
+                }
+        return  ProductEditionDto::fromEntity($productEdition);
+    }
+
+    public function findProductEdition(int $id): ProductEdition
+    {
+        $productEdition = $this->productEditionRepository->find(['id' => $id]);
+
+         if(!$productEdition) {
+            throw new BusinessException('Product Edition no se encuentra.');
+        }
+
+        return $productEdition;
+    }
+
     public function generateEntity($productEditionDto): ProductEdition
     {
 
         $productTitle = $this->productRepository->find(['id' => $productEditionDto->title['id']]);
 
         if(!$productTitle) {
-            throw new BusinessException('Error al generera entidad. Product Title no se encuentra.');
+            throw new BusinessException('Product Edition no se encuentra.');
         }
 
         $label = $this->recordLabelRepository->find($productEditionDto->label);

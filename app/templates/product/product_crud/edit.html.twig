@@ -72,7 +72,10 @@
                         data-ajaxaddimage="{{ path('app_product_image_upload') }}"
                        name="product_image" accept="image/*" class="d-none">
                     </div>
-                    <a href="#" class="btn btn-sm btn-outline-success">Editar Edición</a>
+                    <a href="#" class="btn btn-primary open-edition-modal" 
+                    data-url="{{ path('app_product_edition_crud_edit', { id: edition.id }) }}">
+                      Editar Edición
+                    </a>
 
                     <a href="#" class="btn btn-sm btn-outline-success">Añadir Ítem Usado</a>
                   </div>
@@ -94,37 +97,33 @@
                       {% endfor %}
                     </div>
                   </div>
-
-                  <table class="table table-sm table-striped">
-                    <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Format</th>
-                          <th>Código de barras</th>
-                          <th>Udes. 2ª mano</th>
-                          <th>Acciones</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for edition in edition.getProductUsedItems() %}
+                  {% if edition.getProductUsedItems()|length > 0%}
+                    <table class="table table-sm table-striped">
+                      <thead>
                           <tr>
-                            <td>x</td>
-                            <td>x</td>
-                            <td>x</td>
-                            <td>x</td>
-                            <td>
-                              <a href="#" class="btn btn-sm btn-primary">Editar</a>
-                              <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
-                            </td>
+                            <th>ID</th>
+                            <th>Format</th>
+                            <th>Código de barras</th>
+                            <th>Udes. 2ª mano</th>
+                            <th>Acciones</th>
                           </tr>
-
-                        {% else %}
-                              <tr>
-                                  <td colspan="6" class="text-center text-muted">No hay productos usados de esta edición</td>
-                              </tr>
-                        {% endfor %}
-                      </tbody>
-                  </table>
+                        </thead>
+                        <tbody>
+                        {% for edition in edition.getProductUsedItems() %}
+                            <tr>
+                              <td>x</td>
+                              <td>x</td>
+                              <td>x</td>
+                              <td>x</td>
+                              <td>
+                                <a href="#" class="btn btn-sm btn-primary">Editar</a>
+                                <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -142,66 +141,6 @@
 
 
  {{ include('product/product_crud/modals/modal_add_edition.html.twig') }}
-
-
-
-
-{# 
-<div class="container">
-    <div class="row justify-content-center" style="margin-top: 20px;">
-        <div class="col-md-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h1>Editar Producto</h1>
-
-
-                    <ul class="nav nav-tabs" id="productTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="title-tab" data-bs-toggle="tab" data-bs-target="#title" type="button" role="tab" aria-controls="title" aria-selected="true">
-                        Título
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="edictions-tab" data-bs-toggle="tab" data-bs-target="#edictions" type="button" role="tab" aria-controls="edictions" aria-selected="false">
-                        Ediciones
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="items-tab" data-bs-toggle="tab" data-bs-target="#items" type="button" role="tab" aria-controls="items" aria-selected="false">
-                        Unidades 2ª Mano
-                        </button>
-                    </li>
-                    </ul>
-
-        
-                    <div class="tab-content mt-4" id="productTabsContent">
-                            <div class="tab-pane fade show active" id="title" role="tabpanel" aria-labelledby="title-tab">
-                                {% include 'partials/_alert_messages.html.twig' %}
-                            <div class="mb-4">
-                                {{ include('product/product_crud/_form.html.twig', {'button_label': 'Update'}) }}
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <a href="{{ path('app_product_crud_index') }}" class="btn btn-outline-primary">← Volver al listado Productos</a>
-
-                                {{ include('product/product_crud/_delete_form.html.twig') }}
-                            </div>
-
-
-                            <div class="tab-pane fade" id="edictions" role="tabpanel" aria-labelledby="edictions-tab">
-                            EDICIONES
-                            </div>
-
-
-                            <div class="tab-pane fade" id="items" role="tabpanel" aria-labelledby="items-tab">
-                            ITEMS
-                            </div>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div> #}
+ {{ include('product/product_crud/modals/modal_edit_edition.html.twig') }}
 
 {% endblock %}

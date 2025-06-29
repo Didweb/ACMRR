@@ -95,3 +95,26 @@ function handleImageChange(event) {
         console.error('Error AJAX', err);
     });
 }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.open-edition-modal').forEach(button => {
+    button.addEventListener('click', function (e) {
+      e.preventDefault(); // Evita navegación si es un <a href="#">
+      const url = this.dataset.url;
+
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          document.querySelector('#modalEditionFormContent').innerHTML = html;
+
+          // Mostrar el modal
+          const modal = new bootstrap.Modal(document.getElementById('modalEditionForm'));
+          modal.show();
+        })
+        .catch(err => {
+          console.error('Error al cargar el formulario:', err);
+        });
+    });
+  });
+});

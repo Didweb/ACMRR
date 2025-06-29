@@ -54,4 +54,28 @@ class ProductEditionCrudController extends AbstractController
 
         throw new BusinessException('El formulario no fue enviado correctamente o contiene errores.');
     }
+
+    #[Route('/edit/{id}', name: 'app_product_edition_crud_edit', methods: ['GET','POST'])]
+    public function upload(int $id, Request $request): Response
+    {
+        $productEdition = $this->productEditCrudService->findProductEdition($id);
+        $form = $this->createForm(ProductEditionForm::class, $productEdition);
+        $form->handleRequest($request);
+
+         if ($form->isSubmitted() && $form->isValid()) {
+
+            $productEditionDto = ProductEditionDto::fromEntity($productEdition);
+            $productTitleDto = $this->productEditCrudService->update($productEditionDto);
+
+            return $this->redirectToRoute('app_product_crud_edit', ['id' => $productTitleDto->title['id']]);
+        }
+
+        $isEdit = $productEdition->getId() !== null;
+
+        return $this->render('product/product_crud/product_edition/_form.html.twig', [
+            'formEdition' => $form->createView(),
+            'isEdit' => $isEdit,
+            'productEdition' => $productEdition
+        ]);
+    }
 }
