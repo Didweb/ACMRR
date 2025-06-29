@@ -34,31 +34,34 @@
         <!-- Pestaña 2: Ediciones + Items Usados -->
         <div class="tab-pane fade" id="edictions" role="tabpanel" aria-labelledby="edictions-tab">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mb-0">Ediciones del Producto</h5>
-            {# <a href="#" class="btn btn-sm btn-success"> #}
             <a href="#"  id="btn-add-edition"  class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddEdiction"
             data-titleid = {productTitle.id} 
                         data-ajaxaddedition="{{ path('app_product_edition_crud_new', {'titleId' : productTitle.id}) }}">
             Añadir Edición</a>
           </div>
 
-          <div class="accordion" id="accordionEdictions">
+        <div class="accordion" id="accordionEdictions">
 
 
           {% for edition in productTitle.editions %}
-            <div class="accordion-item">
+            <div class="accordion-item" id="block-{{edition.id}}">
               <h2 class="accordion-header" id="headingOne{{edition.id}}">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" 
                   data-bs-target="#collapseOne{{edition.id}}" aria-expanded="true" aria-controls="collapseOne{{edition.id}}">
-                  {{edition.year}} - {{edition.label.name}} - {{ edition.barcode }}
-                </button>
+                  <b class="mr-2">{{edition.year}} - {{edition.label.name}}</b>  
+                  <small class="m-3">Stock nuevo: <b>{{ edition.stockNew }}</b> - Stock Usado: <b>{{edition.getProductUsedItems()|length }}</b></small>
+                  </button>
               </h2>
-              <div id="collapseOne{{edition.id}}" class="accordion-collapse collapse" aria-labelledby="headingOne{{edition.id}}" 
+              <div id="collapseOne{{edition.id}}" 
+                      class="accordion-collapse collapse" aria-labelledby="headingOne{{edition.id}}" 
                       data-bs-parent="#accordionEdictions">
                 <div class="accordion-body">
-                  <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="text-center">
+                    <small>{{ edition.barcode }}</small><br>
                     <img src="/barcodes/{{ edition.barcode }}.png" alt="Código de barras" />
-                    <div class="mb-3">
+                    </div>
+                    <div class="mb-3 mt-3">
                       <button type="button" class="btn btn-outline-primary" 
                         onclick="document.getElementById('productImageInput{{edition.id}}').click()">
                         <i class="bi bi-images"></i><i class="bi bi-plus"></i>
@@ -69,15 +72,23 @@
                         data-ajaxaddimage="{{ path('app_product_image_upload') }}"
                        name="product_image" accept="image/*" class="d-none">
                     </div>
+                    <a href="#" class="btn btn-primary open-edition-modal" 
+                    data-url="{{ path('app_product_edition_crud_edit', { id: edition.id }) }}">
+                      Editar Edición
+                    </a>
+                    <a href="#" class="btn btn-danger deleteProductEdition" 
+                    data-producteditionid="{{edition.id}}"
+                    data-ajaxdeleteproductedition="{{ path('app_product_edition_crud_delete', { id: edition.id }) }}">
+                      Eliminar Edición
+                    </a>
 
-                    <strong>Ítems Usados de Edición A</strong>
                     <a href="#" class="btn btn-sm btn-outline-success">Añadir Ítem Usado</a>
                   </div>
 
                   <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="showImages{{edition.id}}">
                       {% for image in edition.getImages() %}
-                       <div class="d-inline-flex align-items-center border rounded p-1" id="{{image.id}}" >
+                       <div class="d-inline-flex align-items-center border rounded p-1 m-2" id="{{image.id}}" >
                         <img src="{{image.getPath()}}" alt="Imagen: {{ image.getFilename()}}" class="imageProductEdition"
                          class="img-thumbnail" style="max-width: 100px; height: auto;"/>
                         <button type="button" 
@@ -91,32 +102,33 @@
                       {% endfor %}
                     </div>
                   </div>
-
-                  <table class="table table-sm table-striped">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Format</th>
-                        <th>Código de barras</th>
-                        <th>Udes.</th>
-                        <th>Udes. 2ª mano</th>
-                        <th>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>x</td>
-                        <td>x</td>
-                        <td>x</td>
-                        <td>x</td>
-                        <td>x</td>
-                        <td>
-                          <a href="#" class="btn btn-sm btn-primary">Editar</a>
-                          <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  {% if edition.getProductUsedItems()|length > 0%}
+                    <table class="table table-sm table-striped">
+                      <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Format</th>
+                            <th>Código de barras</th>
+                            <th>Udes. 2ª mano</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for edition in edition.getProductUsedItems() %}
+                            <tr>
+                              <td>x</td>
+                              <td>x</td>
+                              <td>x</td>
+                              <td>x</td>
+                              <td>
+                                <a href="#" class="btn btn-sm btn-primary">Editar</a>
+                                <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -134,66 +146,6 @@
 
 
  {{ include('product/product_crud/modals/modal_add_edition.html.twig') }}
-
-
-
-
-{# 
-<div class="container">
-    <div class="row justify-content-center" style="margin-top: 20px;">
-        <div class="col-md-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h1>Editar Producto</h1>
-
-
-                    <ul class="nav nav-tabs" id="productTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="title-tab" data-bs-toggle="tab" data-bs-target="#title" type="button" role="tab" aria-controls="title" aria-selected="true">
-                        Título
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="edictions-tab" data-bs-toggle="tab" data-bs-target="#edictions" type="button" role="tab" aria-controls="edictions" aria-selected="false">
-                        Ediciones
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="items-tab" data-bs-toggle="tab" data-bs-target="#items" type="button" role="tab" aria-controls="items" aria-selected="false">
-                        Unidades 2ª Mano
-                        </button>
-                    </li>
-                    </ul>
-
-        
-                    <div class="tab-content mt-4" id="productTabsContent">
-                            <div class="tab-pane fade show active" id="title" role="tabpanel" aria-labelledby="title-tab">
-                                {% include 'partials/_alert_messages.html.twig' %}
-                            <div class="mb-4">
-                                {{ include('product/product_crud/_form.html.twig', {'button_label': 'Update'}) }}
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <a href="{{ path('app_product_crud_index') }}" class="btn btn-outline-primary">← Volver al listado Productos</a>
-
-                                {{ include('product/product_crud/_delete_form.html.twig') }}
-                            </div>
-
-
-                            <div class="tab-pane fade" id="edictions" role="tabpanel" aria-labelledby="edictions-tab">
-                            EDICIONES
-                            </div>
-
-
-                            <div class="tab-pane fade" id="items" role="tabpanel" aria-labelledby="items-tab">
-                            ITEMS
-                            </div>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div> #}
+ {{ include('product/product_crud/modals/modal_edit_edition.html.twig') }}
 
 {% endblock %}

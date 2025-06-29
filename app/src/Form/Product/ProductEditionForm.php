@@ -2,6 +2,7 @@
 namespace App\Form\Product;
 
 use App\Entity\Artist;
+use App\Entity\ProductTag;
 use App\Entity\RecordLabel;
 use App\Entity\ProductTitle;
 use App\Entity\ProductEdition;
@@ -71,6 +72,17 @@ class ProductEditionForm extends AbstractType
                     'class' => 'select2 form-control mb-3',
                 ],
             ])
+            ->add('tags', EntityType::class, [
+            'class' => ProductTag::class,
+            'choice_label' => 'name',   
+            'multiple' => true,
+            'expanded' => false,       
+            'label' => 'Etiquetas',
+            'required' => false,
+            'attr' => [
+                'class' => 'select2 form-control mb-3', 
+            ],
+        ])
         ;
     }
 
