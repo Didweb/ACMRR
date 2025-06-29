@@ -1,0 +1,14 @@
+{# {{ form_start(formEdition, {'action': path('app_product_edition_crud_save')}) }} #}
+
+{{ form_start(formEdition, {
+    'action': isEdit
+        ? path('app_product_edition_crud_edit', {'id': productEdition.id})
+        : path('app_product_edition_crud_save')
+}) }}
+
+{{ form_widget(formEdition) }}
+{# <button type="submit" class="btn btn-success mt-3">Guardar</button> #}
+<button type="submit" class="btn btn-success mt-3">
+        {{ isEdit ? 'Actualizar' : 'Guardar' }}
+    </button>
+{{ form_end(formEdition) }}

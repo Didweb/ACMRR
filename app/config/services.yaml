@@ -4,6 +4,9 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    barcode_directory: '%kernel.project_dir%/public/barcodes'
+    img_products_directory: '%kernel.project_dir%/public/products'
+    img_products_public: '/products/'
 
 services:
     # default configuration for services in *this* file
@@ -30,3 +33,13 @@ services:
     App\EventSuscriber\ValidationExceptionSubscriber:
         tags:
             - { name: 'kernel.event_subscriber' }
+
+    App\Service\Product\BarcodeImageGenerator:
+        arguments:
+            $barcodeDir: '%barcode_directory%'
+
+
+    App\Service\Product\ImageCrudService:
+        arguments:
+            $imgProductsDir: '%img_products_directory%'
+            $imgProductsPublic: '%img_products_public%'
