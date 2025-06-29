@@ -59,14 +59,6 @@ final class ArtistCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_artist_crud_show', methods: ['GET'])]
-    public function show(Artist $artist): Response
-    {
-        return $this->render('artist_crud/show.html.twig', [
-            'artist' => $artist,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_artist_crud_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Artist $artist, EntityManagerInterface $entityManager): Response
     {
