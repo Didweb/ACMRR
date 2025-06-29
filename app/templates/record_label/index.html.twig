@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Listado de sellos{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    {% include 'partials/_alert_messages.html.twig' %}
+    <div class="row mb-3">
+        <div class="col">
+            <h1>Listado de Sellos</h1>
+        </div>
+        <div class="col text-end">
+            <a href="{{ path('app_record_label_new') }}" class="btn btn-primary">+ Nuevo Sello</a>
+        </div>
+    <div class="row">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for record_label in pagination %}
+                            <tr>
+                                <td>{{ record_label.id }}</td>
+                                <td>{{ record_label.name }}</td>
+                                <td>
+                                    <a href="{{ path('app_record_label_show', {'id': record_label.id}) }}"class="btn btn-sm btn-outline-secondary">Ver</a>
+                                    <a href="{{ path('app_record_label_edit', {'id': record_label.id}) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3"  class="text-center text-muted">No se han encontrado Sellos</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="navigation mt-3  d-flex justify-content-end">
+                        {{ knp_pagination_render(pagination) }}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    
+{% endblock %}

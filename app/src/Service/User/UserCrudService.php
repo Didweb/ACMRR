@@ -23,7 +23,8 @@ class UserCrudService
         private PaginatorInterface $paginator,
         private EntityManagerInterface $em,
         private readonly UserPasswordHasherInterface $hasher,
-        private CsrfTokenManagerInterface $csrfTokenManager) {}
+        private CsrfTokenManagerInterface $csrfTokenManager) 
+    {}
 
     public function getPaginated(UserFilterDto $filter): PaginationInterface
     {

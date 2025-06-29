@@ -1,0 +1,32 @@
+<!-- Este modal debe ser único por edición o cargarse dinámicamente -->
+@foreach ($productTitle->edictions as $ediction)
+  {# <div class="modal fade" id="modalAddItemUsado{{ $ediction->id }}" tabindex="-1" aria-labelledby="modalAddItemUsadoLabel{{ $ediction->id }}" aria-hidden="true"> #}
+  <div class="modal fade" id="modalAddItemUsado" tabindex="-1" aria-labelledby="modalAddItemUsadoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form method="POST" action="{{ route('product_item_usado.store') }}">
+        @csrf
+        <input type="hidden" name="product_ediction_id" value="{{ $ediction->id }}">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalAddItemUsadoLabel{{ $ediction->id }}">Nuevo Ítem Usado - {{ $ediction->name }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Condición</label>
+              <input type="text" name="condicion" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Precio</label>
+              <input type="number" name="precio" step="0.01" class="form-control" required>
+            </div>
+            <!-- más campos si quieres -->
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Guardar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+@endforeach

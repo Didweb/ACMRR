@@ -14,3 +14,38 @@
 .hover-effect:hover {
     color: #05357e !important; 
 }
+
+.select2-container--open .select2-dropdown {
+    width: auto !important;
+    min-width: 250px !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    left: 0 !important;  /* evitar desplazamientos extra */
+    right: auto !important;
+    z-index: 1055 !important; /* encima del modal */
+}
+
+/* El contenedor del select2 */
+.select2-container {
+    width: 100% !important;
+}
+
+/* Opcional, si quieres que el input de búsqueda ocupe todo el ancho */
+.select2-search--inline .select2-search__field {
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.imageProductEdition {
+    width: 75px;
+    max-width: 100px; height: auto;
+}
+
+.position-relative > button {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.position-relative:hover > button {
+  opacity: 1;
+}

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ProductTitle index{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    {% include 'partials/_alert_messages.html.twig' %}
+    <div class="row mb-3">
+        <div class="col">
+            <h1>Listado de productos</h1>
+        </div>
+        <div class="col text-end">
+            <a href="{{ path('app_product_crud_new') }}" class="btn btn-primary">+ Crear Producto</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for product_title in pagination %}
+                            <tr>
+                                <td>{{ product_title.id }}</td>
+                                <td>{{ product_title.name }}</td>
+                                <td>
+                                    <a href="{{ path('app_product_crud_show', {'id': product_title.id}) }}" class="btn btn-sm btn-outline-secondary">Ver</a>
+                                    <a href="{{ path('app_product_crud_edit', {'id': product_title.id}) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No hay productos</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+    
+                    <div class="navigation mt-3  d-flex justify-content-end">
+                        {{ knp_pagination_render(pagination) }}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -4,6 +4,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\ValueObject\Product\ProductStatus;
 use App\ValueObject\Product\ProductBarcode;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity]
 class ProductUsedItem
@@ -19,10 +21,21 @@ class ProductUsedItem
     private ProductBarcode $barcode; 
 
     #[ORM\Column(type:"product_status", length:10)]
-    private ProductStatus $condition;
+    private ProductStatus $conditionVinyl;
+
+    #[ORM\Column(type:"product_status", length:10)]
+    private ProductStatus $conditionFolder;
 
     #[ORM\Column(type:"float")]
     private float $price;   
+
+    #[ORM\OneToMany(mappedBy: 'productItemUsed', targetEntity: ProductImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $images;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -44,18 +57,6 @@ class ProductUsedItem
     public function setEdition(?ProductEdition $edition): self
     {
         $this->edition = $edition;
-
-        return $this;
-    }
-
-    public function getCondition(): ProductStatus
-    {
-        return $this->condition;
-    }
-
-    public function setCondition(ProductStatus $condition): self
-    {
-        $this->condition = $condition;
 
         return $this;
     }
@@ -82,5 +83,61 @@ class ProductUsedItem
         $this->barcode = $barcode;
 
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'barcode' => $this->getBarcode()->value(),
+            'conditionVinyl' => $this->getConditionVinyl()->getValue(),
+            'conditionFolder' => $this->getConditionFolder()->getValue(),
+            'price' => $this->getPrice(),
+            'images' => $this->getImages(),
+        ];
+    }
+
+    public function getConditionVinyl(): ProductStatus
+    {
+        return $this->conditionVinyl;
+    }
+
+    
+    public function setConditionVinyl(ProductStatus $conditionVinyl): self
+    {
+        $this->conditionVinyl = $conditionVinyl;
+
+        return $this;
+    }
+
+    public function getConditionFolder(): ProductStatus
+    {
+        return $this->conditionFolder;
+    }
+
+    public function setConditionFolder(ProductStatus $conditionFolder): self
+    {
+        $this->conditionFolder = $conditionFolder;
+
+        return $this;
+    }
+
+    public function addImage(ProductImage $image): void
+    {
+        $this->images[] = $image;
+        $image->getProductUsedItem($this);
+    }
+
+    public function removeImage(ProductImage $image): void
+    {
+        $this->images->removeElement($image);
+        if ($image->getProductUsedItem() === $this) {
+            $image->getProductUsedItem(null);
+        }
+    }
+
+    public function getImages(): Collection
+    {
+        return $this->images;
     }
 }
