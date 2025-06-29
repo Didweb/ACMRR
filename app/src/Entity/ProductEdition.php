@@ -49,8 +49,13 @@ class ProductEdition
     #[ORM\OneToMany(mappedBy: 'productEdition', targetEntity: ProductImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $images;
 
+    #[ORM\ManyToMany(targetEntity: ProductTag::class, inversedBy: 'productEditions', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'product_edition_tag')]
+    private Collection $tags;
+
     public function __construct()
     {
+        $this->tags = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->tracks = new ArrayCollection();
         $this->artists = new ArrayCollection();
@@ -246,6 +251,7 @@ class ProductEdition
             'barcode' => (string) $this->barcode,
             'stockNew' => $this->stockNew,
             'priceNew' => $this->priceNew,
+            'tags' => $this->getTags(),
             'images' => $this->getImagesArray(),
             'productUsedItems' => array_map(
                 fn(ProductUsedItem $item) => $item->toArray(),
@@ -283,5 +289,27 @@ class ProductEdition
                 'url' => $image->getPath(),
             ];
         })->toArray();
+    }
+
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(ProductTag $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+            $tag->addProductEdition($this);
+        }
+        return $this;
+    }
+
+    public function removeTag(ProductTag $tag): self
+    {
+        if ($this->tags->removeElement($tag)) {
+            $tag->removeProductEdition($this);
+        }
+        return $this;
     }
 }
