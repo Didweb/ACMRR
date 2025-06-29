@@ -2,12 +2,9 @@
 
 namespace App\Form\Artist;
 
-use App\Entity\Track;
 use App\Entity\Artist;
-use App\Entity\ProductEdition;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 

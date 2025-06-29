@@ -17,7 +17,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/admin/artist')]
 final class ArtistCrudController extends AbstractController
 {
-
     public function __construct(
         private ArtistCrudService $artistCrudService,
         private DtoValidator $dtoValidator)
@@ -31,7 +30,9 @@ final class ArtistCrudController extends AbstractController
             limit: 10
         );
 
-         $pagination = $this->artistCrudService->getPaginated($filterDto);
+        $this->dtoValidator->validate($filterDto);
+
+        $pagination = $this->artistCrudService->getPaginated($filterDto);
 
         return $this->render('artist_crud/index.html.twig', [
             'pagination' => $pagination,
@@ -47,7 +48,6 @@ final class ArtistCrudController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $artistDto = new ArtistDto(null, $artist->getName());
-
             $artist = $this->artistCrudService->create($artistDto);
 
             return $this->redirectToRoute('app_artist_crud_index', [], Response::HTTP_SEE_OTHER);
@@ -66,7 +66,8 @@ final class ArtistCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $artistDto = new ArtistDto($artist->getId(), $artist->getName());
+            $this->artistCrudService->save($artistDto);
 
             return $this->redirectToRoute('app_artist_crud_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -80,9 +81,9 @@ final class ArtistCrudController extends AbstractController
     #[Route('/{id}', name: 'app_artist_crud_delete', methods: ['POST'])]
     public function delete(Request $request, Artist $artist, EntityManagerInterface $entityManager): Response
     {
+
         if ($this->isCsrfTokenValid('delete'.$artist->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($artist);
-            $entityManager->flush();
+            $this->artistCrudService->delete($artist->getId());
         }
 
         return $this->redirectToRoute('app_artist_crud_index', [], Response::HTTP_SEE_OTHER);
