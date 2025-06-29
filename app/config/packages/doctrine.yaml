@@ -8,6 +8,11 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+
+        types:
+            product_barcode: App\Doctrine\Type\ProductBarcodeType
+            product_status: App\Doctrine\Type\ProductStatusType
+            product_format: App\Doctrine\Type\ProductFormatType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

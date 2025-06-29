@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar Artista{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center" style="margin-top: 20px;">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1>Editar Artista</h1>
+
+                    {% include 'partials/_alert_messages.html.twig' %}
+                    <div class="mb-4">                    
+                        {{ include('artist_crud/_form.html.twig', {'button_label': 'Update'}) }}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ path('app_artist_crud_index') }}"  class="btn btn-outline-primary">← Volver al listado</a>
+
+                        {{ include('artist_crud/_delete_form.html.twig') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

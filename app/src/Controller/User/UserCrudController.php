@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/user/crud')]
+#[Route('/admin/user/crud')]
 final class UserCrudController extends AbstractController
 {
     public function __construct(
@@ -53,7 +53,7 @@ final class UserCrudController extends AbstractController
 
             $user = $this->userCrudService->create($userDto);
             
-             $this->addFlash('success', 'Usuario creado correctamente.');
+            $this->addFlash('success', 'Usuario creado correctamente.');
             return $this->redirectToRoute('app_user_crud_index', [], Response::HTTP_SEE_OTHER);
         }
 
