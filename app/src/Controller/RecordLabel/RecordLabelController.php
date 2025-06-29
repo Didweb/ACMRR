@@ -62,14 +62,6 @@ final class RecordLabelController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_record_label_show', methods: ['GET'])]
-    public function show(RecordLabel $recordLabel): Response
-    {
-        return $this->render('record_label/show.html.twig', [
-            'record_label' => $recordLabel,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_record_label_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, RecordLabel $recordLabel, EntityManagerInterface $entityManager): Response
     {
