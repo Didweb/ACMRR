@@ -21,8 +21,17 @@
         <testsuite name="Unitario">
             <directory>tests/Controller</directory>
         </testsuite>
+
         <testsuite name="Funcional">
             <directory>tests/Service</directory>
+        </testsuite>
+
+        <testsuite name="Dto">
+            <directory>tests/DTO</directory>
+        </testsuite>
+
+        <testsuite name="Entity">
+            <directory>tests/Entity</directory>
         </testsuite>
     </testsuites>
 
