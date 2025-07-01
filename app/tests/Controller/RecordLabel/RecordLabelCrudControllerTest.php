@@ -1,18 +1,17 @@
 <?php
-namespace App\Tests\Controller\Artist;
+namespace App\Tests\Controller\RecordLabel;
 
 use App\Entity\User;
-use App\Entity\Artist;
+use App\Entity\RecordLabel;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class ArtistCrudControllerTest extends WebTestCase
+class RecordLabelCrudControllerTest extends WebTestCase
 {
     private $client;
     private $entityManager;
     private $testUser;
-    private Artist $artist;
 
     protected function setUp(): void
     {
@@ -46,61 +45,61 @@ class ArtistCrudControllerTest extends WebTestCase
 
     public function testIndexPageLoadsCorrectly()
     {
-        $this->client->request('GET', '/admin/artist/list');
+        $this->client->request('GET', '/admin/record/label/list');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('table'); 
-        $this->assertSelectorTextContains('h1', 'Artistas'); 
+        $this->assertSelectorTextContains('h1', 'Sellos'); 
     }
 
-    public function testNewArtistFormDisplayAndSubmit()
+    public function testNewRecordLabelFormDisplayAndSubmit()
     {
 
-        $crawler = $this->client->request('GET', '/admin/artist/new');
-        $name = 'Artista de Prueba'.time();
+        $crawler = $this->client->request('GET', '/admin/record/label/new');
+        $name = 'Record Label'.time();
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('form[name=artist_form]');
+        $this->assertSelectorExists('form[name=record_label_form]');
 
         $form = $crawler->selectButton('Guardar')->form();
-        $form['artist_form[name]'] = $name;
+        $form['record_label_form[name]'] = $name;
 
         $this->client->submit($form);
 
-        $this->assertResponseRedirects('/admin/artist/list');
+        $this->assertResponseRedirects('/admin/record/label/list');
         $crawler = $this->client->followRedirect();
 
         $tbodyText = $crawler->filter('table tbody')->text();
         $this->assertStringContainsString($name, $tbodyText);
 
-        $this->artist = $this->entityManager->getRepository(Artist::class)->findOneBy(['name' => $name]);
+        $recordLabel = $this->entityManager->getRepository(RecordLabel::class)->findOneBy(['name' => $name]);
 
-        $this->assertEquals($name, $this->artist->getName());
+        $this->assertEquals($name, $recordLabel->getName());
     }
 
-    public function testDeleteArtistFormDisplayAndSubmit()
+    public function testDeleteRecordLabelFormDisplayAndSubmit()
     {
-        $artist = new Artist();
-        $artist->setName('Artista a eliminar '.time());
+        $artist = new RecordLabel();
+        $artist->setName('Sello a eliminar '.time());
         $this->entityManager->persist($artist);
         $this->entityManager->flush();
 
-        $crawler = $this->client->request('GET', '/admin/artist/' . $artist->getId() . '/edit');
+        $crawler = $this->client->request('GET', '/admin/record/label/' . $artist->getId() . '/edit');
             $this->assertResponseIsSuccessful();
 
         $token = $crawler->filter('input[name="_token"]')->attr('value');
 
 
-        $this->client->request('POST', '/admin/artist/' . $artist->getId().'/delete', [
+        $this->client->request('POST', '/admin/record/label/' . $artist->getId().'/delete', [
             '_method' => 'POST',
             '_token' => $token,
         ]);
 
-        $this->assertResponseRedirects('/admin/artist/list');
+        $this->assertResponseRedirects('/admin/record/label/list');
         $this->client->followRedirect();
 
         $deletedArtist = $this->entityManager
-            ->getRepository(Artist::class)
+            ->getRepository(RecordLabel::class)
             ->find($artist->getId());
 
         $this->assertNull($deletedArtist);
@@ -111,7 +110,7 @@ class ArtistCrudControllerTest extends WebTestCase
 
         if ($this->entityManager !== null) {
                 $connection = $this->entityManager->getConnection();
-                $connection->executeStatement('DELETE FROM artist');
+                $connection->executeStatement('DELETE FROM record_label');
             }
 
         if ($this->testUser !== null && $this->entityManager !== null) {

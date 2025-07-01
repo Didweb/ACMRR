@@ -80,7 +80,7 @@ final class RecordLabelController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_record_label_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_record_label_delete', methods: ['POST'])]
     public function delete(Request $request, RecordLabel $recordLabel, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$recordLabel->getId(), $request->getPayload()->getString('_token'))) {

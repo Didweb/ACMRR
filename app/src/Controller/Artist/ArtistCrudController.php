@@ -7,7 +7,6 @@ use App\DTO\Artist\ArtistDto;
 use App\Service\DtoValidator;
 use App\Form\Artist\ArtistForm;
 use App\DTO\Artist\ArtistFilterDto;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Artist\ArtistCrudService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
