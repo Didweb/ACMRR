@@ -18,11 +18,11 @@
     </php>
 
     <testsuites>
-        <testsuite name="Unitario">
+        <testsuite name="Funcional">
             <directory>tests/Controller</directory>
         </testsuite>
 
-        <testsuite name="Funcional">
+        <testsuite name="Unitario">
             <directory>tests/Service</directory>
         </testsuite>
 

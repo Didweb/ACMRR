@@ -29,7 +29,7 @@ class RecordLabelDtoTest extends TestCase
     public function testCanBeCreatedFromEntity(): void
     {
         $recordLabel = new RecordLabel();
-        $recordLabel->getName('Universal');
+        $recordLabel->setName('Universal');
 
         $dto = RecordLabelDto::fromEntity($recordLabel);
 

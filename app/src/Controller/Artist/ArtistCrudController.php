@@ -40,7 +40,7 @@ final class ArtistCrudController extends AbstractController
     }
 
     #[Route('/new', name: 'app_artist_crud_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request): Response
     {
         $artist = new Artist();
         $form = $this->createForm(ArtistForm::class, $artist);
@@ -60,7 +60,7 @@ final class ArtistCrudController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_artist_crud_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Artist $artist, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Artist $artist): Response
     {
         $form = $this->createForm(ArtistForm::class, $artist);
         $form->handleRequest($request);
@@ -78,8 +78,8 @@ final class ArtistCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_artist_crud_delete', methods: ['POST'])]
-    public function delete(Request $request, Artist $artist, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_artist_crud_delete', methods: ['POST'])]
+    public function delete(Request $request, Artist $artist): Response
     {
 
         if ($this->isCsrfTokenValid('delete'.$artist->getId(), $request->getPayload()->getString('_token'))) {
