@@ -95,4 +95,34 @@ class ProductCrudService
         return $productTitle;
                  
     }
+
+    public function saveProductTitle(ProductTitleDto $productTitleDtto): void
+    {
+        $productTitle = $this->productRepository->findOneBy(['id' => $productTitleDtto->id]);
+
+        try{
+            $this->em->persist($productTitle);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+            throw new BusinessException('Error al grabar Producto Título. Error en la presistencia.');
+        }
+    }
+
+    public function deleteProductTitle(int $id): void
+    {
+        $productTitle = $this->productRepository->getComplet($id);
+
+         if(!$productTitle) {
+            throw new BusinessException('Error ProductTitle no encontrado.');
+        }
+
+        try{
+            $this->em->remove($productTitle);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+            throw new BusinessException('Error al eleminar ProductTitle.'.$e->getMessage());
+        }
+    }
 }

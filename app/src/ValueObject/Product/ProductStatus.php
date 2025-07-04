@@ -2,6 +2,7 @@
 namespace App\ValueObject\Product;
 
 use App\Exception\BusinessException;
+
 final class ProductStatus
 {
    private const VALID_STATUSES = ['NM', 'VG+', 'VG', 'G+', 'G', 'F', 'P']; 

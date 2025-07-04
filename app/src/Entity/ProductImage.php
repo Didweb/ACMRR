@@ -21,9 +21,11 @@ class ProductImage
     private \DateTimeInterface $createdAt;
 
     #[ORM\ManyToOne(targetEntity: ProductEdition::class, inversedBy: 'images')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?ProductEdition $productEdition = null;
 
     #[ORM\ManyToOne(targetEntity: ProductUsedItem::class, inversedBy: 'images')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?ProductUsedItem $productUsedItem = null;
 
     public function __construct(string $filename, string $path)

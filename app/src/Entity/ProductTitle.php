@@ -14,7 +14,7 @@ class ProductTitle
     #[ORM\Column(type:"string", length:255)]
     private string $name;
 
-    #[ORM\OneToMany(mappedBy:"title", targetEntity:ProductEdition::class)]
+    #[ORM\OneToMany(mappedBy: "title", targetEntity: ProductEdition::class, cascade: ["remove"], orphanRemoval: true)]
     private Collection $editions;
 
     public function __construct()
