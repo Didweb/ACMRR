@@ -82,8 +82,8 @@ class ProductEditionCrudController extends AbstractController
     }
 
 
-    #[Route('/delete/{id}', name: 'app_product_edition_crud_delete', methods: ['DELETE'])]
-    public function delete(int $id, Request $request): Response
+    #[Route('/delete/{id}', name: 'app_product_edition_crud_delete', methods: ['DELETE'], requirements: ['id' => '\d+'])]
+    public function delete(int $id): Response
     {
         $productEdition = $this->productEditCrudService->findProductEdition($id);
         

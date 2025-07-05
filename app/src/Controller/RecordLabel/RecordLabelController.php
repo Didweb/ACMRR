@@ -39,7 +39,7 @@ final class RecordLabelController extends AbstractController
     }
 
     #[Route('/new', name: 'app_record_label_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request): Response
     {
         $recordLabel = new RecordLabel();
         $form = $this->createForm(RecordLabelForm::class, $recordLabel);
@@ -63,13 +63,15 @@ final class RecordLabelController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_record_label_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, RecordLabel $recordLabel, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, RecordLabel $recordLabel): Response
     {
         $form = $this->createForm(RecordLabelForm::class, $recordLabel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+
+            $recordLabelDto = new RecordLabelDto($recordLabel->getId(), $recordLabel->getName());
+            $this->recordLabelCrudService->save($recordLabelDto);
 
             return $this->redirectToRoute('app_record_label_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -80,12 +82,13 @@ final class RecordLabelController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'app_record_label_delete', methods: ['POST'])]
-    public function delete(Request $request, RecordLabel $recordLabel, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_record_label_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function delete(Request $request, RecordLabel $recordLabel): Response
     {
         if ($this->isCsrfTokenValid('delete'.$recordLabel->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($recordLabel);
-            $entityManager->flush();
+
+            $this->recordLabelCrudService->delete($recordLabel->getId());
+            
         }
 
         return $this->redirectToRoute('app_record_label_index', [], Response::HTTP_SEE_OTHER);

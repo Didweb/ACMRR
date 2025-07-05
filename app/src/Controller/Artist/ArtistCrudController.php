@@ -77,11 +77,12 @@ final class ArtistCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'app_artist_crud_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_artist_crud_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, Artist $artist): Response
     {
 
         if ($this->isCsrfTokenValid('delete'.$artist->getId(), $request->getPayload()->getString('_token'))) {
+
             $this->artistCrudService->delete($artist->getId());
         }
 

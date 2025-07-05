@@ -38,27 +38,64 @@ class ProductTagCrudService
         return $pagination;
     }
 
-    public function create(ProductTagDto $productTagDtto): ProductTagDto
+    public function create(ProductTagDto $productTagDto): ProductTagDto
     {
 
-        if ($this->productRepository->findOneBy(['name' => $productTagDtto->name])) {
+        if ($this->productRepository->findOneBy(['name' => $productTagDto->name])) {
             throw new BusinessException('Error al crear el Tag. Nombre Duplicado, ya existente en la base de datos.');
         }
 
         try {
             $productTag = new ProductTag();
-            $productTag->setName($productTagDtto->name);
+            $productTag->setName($productTagDto->name);
 
             $this->em->persist($productTag);
             $this->em->flush();
 
         } catch(\Exception $e) {
-            throw new BusinessException('Error al crear Producto Título. Error en la presistencia.');
+            throw new BusinessException('Error al crear Producto Tag. Error en la presistencia.');
         }
 
         return new ProductTagDto(
                 $productTag->getId(),
                 $productTag->getName()
         );
+    }
+
+    public function save(ProductTagDto $productTagDto): void
+    {
+        $productTag = $this->productRepository->findOneBy(['id' => $productTagDto->id]);
+
+        if (!$productTag) {
+            throw new BusinessException('Error al grabar el Tag. No existe. ID: '.$productTagDto->id);
+        }
+
+        try{ 
+            $this->em->persist($productTag);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+                throw new BusinessException('Error al grabar Producto Tag. Error en la presistencia.');
+        }
+
+    }
+
+    public function delete(int $id): void
+    {
+
+        $productTag = $this->productRepository->findOneBy(['id' => $id]);
+
+        if (!$productTag) {
+            throw new BusinessException('Error al grabar el Tag. No existe. ID: '.$id);
+        }
+
+        try {
+            $this->em->remove($productTag);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+            throw new BusinessException('Error al eleiminar Producto Tag. Error en la presistencia.');
+        }
+
     }
 }

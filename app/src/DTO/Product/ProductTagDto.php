@@ -15,4 +15,5 @@ final class ProductTagDto
         #[Assert\Length(min: 3, max: 50)]
         public readonly string $name
     ) {} 
+
 }

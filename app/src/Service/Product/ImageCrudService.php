@@ -60,8 +60,6 @@ class ImageCrudService
 
         $entity = $this->em->getRepository($entityClass)->find($imageUploadDto->entityId);
 
-
-
         return JsonResponseFactory::success(['last_image' => $filename, 'all_images' => $entity->getImagesArray()]);
     }
 
