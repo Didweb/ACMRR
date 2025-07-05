@@ -100,6 +100,10 @@ class ProductCrudService
     {
         $productTitle = $this->productRepository->findOneBy(['id' => $productTitleDtto->id]);
 
+        if(!$productTitle) {
+            throw new BusinessException('Error ProductTitle no encontrado.');
+        }
+
         try{
             $this->em->persist($productTitle);
             $this->em->flush();
