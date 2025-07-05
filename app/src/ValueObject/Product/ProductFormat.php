@@ -41,7 +41,7 @@ class ProductFormat
     }
 
     public static function choicesStr(): array
-{
-    return self::VALID_FORMATS;
-}
+    {
+        return self::VALID_FORMATS;
+    }
 }

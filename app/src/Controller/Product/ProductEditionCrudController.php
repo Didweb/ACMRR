@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller\Product;
 
-use App\Entity\ProductTitle;
 use App\Entity\ProductEdition;
 use App\DTO\Product\ProductEditionDto;
 use App\Exception\BusinessException;
