@@ -83,12 +83,12 @@ class ProductImage
         return $this;
     }
 
-    public function getProductEdition(): ProductEdition
+    public function getProductEdition(): ?ProductEdition
     {
         return $this->productEdition;
     }
 
-    public function setProductEdition(ProductEdition $productEdition): self
+    public function setProductEdition(?ProductEdition $productEdition): self
     {
         $this->productEdition = $productEdition;
 

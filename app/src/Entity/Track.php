@@ -9,14 +9,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Track
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: "integer")]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: "string", length: 255)]
     private string $title;
 
     #[ORM\ManyToOne(targetEntity: ProductEdition::class, inversedBy: "tracks")]
     #[ORM\JoinColumn(nullable: false)]
-    private ProductEdition $productEdition;
+    private ?ProductEdition $productEdition = null;
 
     #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: "tracks")]
     #[ORM\JoinTable(name: "track_artist")]
@@ -31,7 +31,7 @@ class Track
         $this->artists = new ArrayCollection();
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -47,12 +47,12 @@ class Track
         return $this;
     }
 
-    public function getProductEdition(): ProductEdition
+    public function getProductEdition(): ?ProductEdition
     {
         return $this->productEdition;
     }
 
-    public function setProductEdition(ProductEdition $productEdition): self
+    public function setProductEdition(?ProductEdition $productEdition): self
     {
         $this->productEdition = $productEdition;
         return $this;
@@ -94,11 +94,11 @@ class Track
     public function toArray(): array
     {
         return [
-            'id' => $this->getId(),
+            'id' => $this->getId() ?? null,
             'title' => $this->getTitle(),
             'artists' => $this->artists->map(
-                fn(Artist $artist) => $artist->toArray()
-            )->toArray(),
+                            fn(Artist $artist) => $artist->toArray()
+                        )->toArray(),
             'riddim' => $this->riddim?->getName(),
         ];
     }
