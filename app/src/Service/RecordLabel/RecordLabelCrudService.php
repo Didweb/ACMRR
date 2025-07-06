@@ -61,4 +61,39 @@ class RecordLabelCrudService
                 name: $recordLabel->getName()
         );
     }
+
+    public function save(RecordLabelDto $recordLabelDto): void
+    {
+        $recordLabel = $this->recordLabelRepository->findOneBy(['id' => $recordLabelDto->id]);
+
+        if(!$recordLabel) {
+                throw new BusinessException('Error al grabar Sello. No existe sello.');
+        }
+
+        try {
+            $this->em->persist($recordLabel);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+             throw new BusinessException('Error al grabar Sello. Error en la presistencia.');
+        }
+    }
+
+    public function delete(int $id): void
+    {
+         $recordLabel = $this->recordLabelRepository->findOneBy(['id' => $id]);
+
+        if(!$recordLabel) {
+                throw new BusinessException('Error al grabar Sello. No existe sello.');
+        }
+
+        try{
+
+            $this->em->remove($recordLabel);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+            throw new BusinessException('Error al eliminar Sello. Error en la presistencia.');
+        }
+    }
 }

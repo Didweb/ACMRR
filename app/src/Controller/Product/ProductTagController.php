@@ -6,7 +6,6 @@ use App\Entity\ProductTag;
 use App\DTO\Product\ProductTagDto;
 use App\Form\Product\ProductTagForm;
 use App\DTO\Product\ProductTagFilterDto;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Service\Product\ProductTagCrudService;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,7 +35,7 @@ final class ProductTagController extends AbstractController
     }
 
     #[Route('/new', name: 'app_product_product_tag_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request): Response
     {
         $productTag = new ProductTag();
         $form = $this->createForm(ProductTagForm::class, $productTag);
@@ -60,13 +59,15 @@ final class ProductTagController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_product_product_tag_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, ProductTag $productTag, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, ProductTag $productTag): Response
     {
         $form = $this->createForm(ProductTagForm::class, $productTag);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+
+            $productTagDto = new ProductTagDto($productTag->getId(), $productTag->getName());
+            $this->productTagCrudService->save($productTagDto);
 
             return $this->redirectToRoute('app_product_product_tag_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -77,12 +78,13 @@ final class ProductTagController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_product_product_tag_delete', methods: ['POST'])]
-    public function delete(Request $request, ProductTag $productTag, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_product_product_tag_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function delete(Request $request, ProductTag $productTag): Response
     {
         if ($this->isCsrfTokenValid('delete'.$productTag->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($productTag);
-            $entityManager->flush();
+            
+            $this->productTagCrudService->delete($productTag->getId());
+            
         }
 
         return $this->redirectToRoute('app_product_product_tag_index', [], Response::HTTP_SEE_OTHER);

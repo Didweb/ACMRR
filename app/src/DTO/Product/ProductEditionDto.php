@@ -5,20 +5,62 @@ use App\Entity\Track;
 use App\Entity\Artist;
 use App\Entity\ProductEdition;
 use App\Entity\ProductUsedItem;
+use App\ValueObject\Product\ProductFormat;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductEditionDto
 {
     public function __construct(
+        #[Assert\Positive(message: 'El ID debe ser un número positivo.')]
         public readonly ?int $id,
+
+
+        #[Assert\NotNull(message: 'El título es obligatorio.')]
+        #[Assert\Type('array')]
         public readonly ?array $title,
+
+        #[Assert\NotBlank(message: 'El sello (label) es obligatorio.')]
+        #[Assert\Type('string')]
+        #[Assert\Length(
+            max: 255,
+            maxMessage: 'El sello no puede tener más de {{ limit }} caracteres.'
+        )]
         public readonly ?string $label,
+
+        #[Assert\NotNull(message: 'El año es obligatorio.')]
+        #[Assert\Range(
+            min: 1900,
+            max: 2100,
+            notInRangeMessage: 'El año debe estar entre {{ min }} y {{ max }}.'
+        )]
         public readonly ?int $year,
+
+        #[Assert\NotBlank(message: 'El formato es obligatorio.')]
+        #[Assert\Choice(
+            callback: [ProductFormat::class, 'choicesStr'],
+            message: 'El formato "{{ value }}" no es válido.'
+        )]
         public readonly ?string $format,
+
+        #[Assert\Length(
+            max: 255,
+            maxMessage: 'El código de barras no puede tener más de {{ limit }} caracteres.'
+        )]
         public readonly ?string $barcode,
+
+        #[Assert\PositiveOrZero(message: 'El stock debe ser cero o mayor.')]
         public readonly int $stockNew,
+
+        #[Assert\PositiveOrZero(message: 'El precio debe ser cero o mayor.')]
         public readonly float $priceNew,
+
+        #[Assert\Type('array')]
         public readonly ?array $productUsedItems,
+
+        #[Assert\Type('array')]
         public readonly ?array $artists,
+
+        #[Assert\Type('array')]
         public readonly ?array $tracks
     ) {} 
     

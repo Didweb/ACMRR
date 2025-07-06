@@ -32,15 +32,10 @@ class ProductEditionCrudService
     public function create(ProductEditionDto $productEditionDto): ProductEditionDto
     {
    
-        try {
-            $productEdition = $this->generateEntity($productEditionDto);
+        $productEdition = $this->generateEntity($productEditionDto);
 
-            $this->em->persist($productEdition);
-            $this->em->flush();
-
-        } catch(\Exception $e) {
-            throw new BusinessException('[create] Error al crear Producto Edition. Error en la presistencia: '.$e->getMessage().json_encode($productEditionDto));
-        }
+        $this->em->persist($productEdition);
+        $this->em->flush();
 
         return  ProductEditionDto::fromEntity($productEdition);
     }

@@ -15,7 +15,7 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserCrudServiceTest  extends TestCase
+class UserCrudServiceTest extends TestCase
 {
 
     private $userRepository;

@@ -7,7 +7,6 @@ use App\DTO\Artist\ArtistDto;
 use App\Service\DtoValidator;
 use App\Form\Artist\ArtistForm;
 use App\DTO\Artist\ArtistFilterDto;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Artist\ArtistCrudService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +16,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/admin/artist')]
 final class ArtistCrudController extends AbstractController
 {
-
     public function __construct(
         private ArtistCrudService $artistCrudService,
         private DtoValidator $dtoValidator)
@@ -31,7 +29,9 @@ final class ArtistCrudController extends AbstractController
             limit: 10
         );
 
-         $pagination = $this->artistCrudService->getPaginated($filterDto);
+        $this->dtoValidator->validate($filterDto);
+
+        $pagination = $this->artistCrudService->getPaginated($filterDto);
 
         return $this->render('artist_crud/index.html.twig', [
             'pagination' => $pagination,
@@ -39,7 +39,7 @@ final class ArtistCrudController extends AbstractController
     }
 
     #[Route('/new', name: 'app_artist_crud_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request): Response
     {
         $artist = new Artist();
         $form = $this->createForm(ArtistForm::class, $artist);
@@ -47,7 +47,6 @@ final class ArtistCrudController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $artistDto = new ArtistDto(null, $artist->getName());
-
             $artist = $this->artistCrudService->create($artistDto);
 
             return $this->redirectToRoute('app_artist_crud_index', [], Response::HTTP_SEE_OTHER);
@@ -60,13 +59,14 @@ final class ArtistCrudController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_artist_crud_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Artist $artist, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Artist $artist): Response
     {
         $form = $this->createForm(ArtistForm::class, $artist);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $artistDto = new ArtistDto($artist->getId(), $artist->getName());
+            $this->artistCrudService->save($artistDto);
 
             return $this->redirectToRoute('app_artist_crud_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -77,12 +77,13 @@ final class ArtistCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_artist_crud_delete', methods: ['POST'])]
-    public function delete(Request $request, Artist $artist, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_artist_crud_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function delete(Request $request, Artist $artist): Response
     {
+
         if ($this->isCsrfTokenValid('delete'.$artist->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($artist);
-            $entityManager->flush();
+
+            $this->artistCrudService->delete($artist->getId());
         }
 
         return $this->redirectToRoute('app_artist_crud_index', [], Response::HTTP_SEE_OTHER);

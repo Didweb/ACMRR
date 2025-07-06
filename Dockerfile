@@ -35,6 +35,12 @@ RUN composer install || true
 # Permisos para www-data
 RUN mkdir -p /var/www/html/var && chown -R www-data:www-data /var/www/html/var
 
+# Instalar Xdebug
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+
+# Configurar Xdebug para cobertura
+COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
 
 EXPOSE 9000
 
