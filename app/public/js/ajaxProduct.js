@@ -72,18 +72,15 @@ function handleImageChange(event) {
         console.log('Imagen subida correctamente');
         const images = data.data.all_images;
 
-        // selector para el div
         const container = document.querySelector(`.showImages${entityId}`);
 
-        // vaciar contenido previo
         container.innerHTML = '';
 
-        // iterar imágenes y añadir <img>
         images.forEach(img => {
             const imgElem = document.createElement('img');
             imgElem.src = img.url;
             imgElem.alt = img.filename;
-            imgElem.style.maxWidth = '150px'; // ejemplo tamaño
+            imgElem.style.maxWidth = '150px';
             imgElem.style.margin = '5px';
             container.appendChild(imgElem);
         });
@@ -100,7 +97,7 @@ function handleImageChange(event) {
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.open-edition-modal').forEach(button => {
     button.addEventListener('click', function (e) {
-      e.preventDefault(); // Evita navegación si es un <a href="#">
+      e.preventDefault(); 
       const url = this.dataset.url;
 
       fetch(url)
@@ -108,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(html => {
           document.querySelector('#modalEditionFormContent').innerHTML = html;
 
-          // Mostrar el modal
           const modal = new bootstrap.Modal(document.getElementById('modalEditionForm'));
           modal.show();
         })

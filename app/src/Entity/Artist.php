@@ -5,14 +5,17 @@ use App\Entity\ProductEdition;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class Artist
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type:"integer")]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type:"string", length:255)]
+    #[Assert\NotBlank(message: 'El nombre es obligatorio.')]
+    #[Assert\Length(max: 255, maxMessage: 'El nombre no puede tener más de {{ limit }} caracteres.')]
     private string $name;
 
     #[ORM\ManyToMany(targetEntity: ProductEdition::class, mappedBy: "artists")]

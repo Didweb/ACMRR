@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller\Product;
 
-use App\Entity\ProductTitle;
 use App\Entity\ProductEdition;
 use App\DTO\Product\ProductEditionDto;
 use App\Exception\BusinessException;
@@ -82,8 +81,8 @@ class ProductEditionCrudController extends AbstractController
     }
 
 
-    #[Route('/delete/{id}', name: 'app_product_edition_crud_delete', methods: ['DELETE'])]
-    public function delete(int $id, Request $request): Response
+    #[Route('/delete/{id}', name: 'app_product_edition_crud_delete', methods: ['DELETE'], requirements: ['id' => '\d+'])]
+    public function delete(int $id): Response
     {
         $productEdition = $this->productEditCrudService->findProductEdition($id);
         

@@ -41,8 +41,9 @@ class ArtistCrudService
 
     public function create(ArtistDto $artistDto): ArtistDto
     {
+        $artistExist = $this->artistRepository->findOneBy(['name' => $artistDto->name]);
 
-        if ($this->artistRepository->findOneBy(['name' => $artistDto->name])) {
+        if ($artistExist) {
             throw new BusinessException('Error al crear artista. Nombre Duplicado, ya existente en la base de datos.');
         }
 
@@ -54,13 +55,48 @@ class ArtistCrudService
             $this->em->flush();
 
         } catch(\Exception $e) {
-            throw new BusinessException('Error al crear artista. Error en la presistencia.');
+            throw new BusinessException('Error al crear artista. Error en la presistencia. Messages: '.$e->getMessage());
         }
-        $artist = $this->artistRepository->findOneBy(['name' => $artistDto->name]);
-       
+
         return new ArtistDto(
                 id: $artist->getId(),
                 name: $artist->getName()
         );
+    }
+
+    public function save(ArtistDto $artistDto): ArtistDto
+    {
+        $artist = $this->artistRepository->find($artistDto->id);
+
+        if (!$artist) {
+            throw new BusinessException('No existe el artista.');
+        }
+
+        try {
+            $artist->setName($artistDto->name);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+            throw new BusinessException('Error al actualizar artista. Error en la presistencia. Message:'.$e->getMessage());
+        }
+
+        return ArtistDto::fromEntity($artist);
+    }
+
+    public function delete(int $id): void
+    {
+        $artist = $this->artistRepository->find($id);
+
+        if (!$artist) {
+            throw new BusinessException('No existe el artista.');
+        }
+
+        try {
+            $this->em->remove($artist);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+            throw new BusinessException('Error al eliminar artista. Error en la presistencia. Message:'.$e->getMessage());
+        }
     }
 }
