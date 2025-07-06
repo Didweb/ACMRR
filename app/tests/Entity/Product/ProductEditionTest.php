@@ -23,10 +23,12 @@ class ProductEditionTest extends TestCase
     protected function setUp(): void
     {
         $this->title = new ProductTitle();
-        $this->title->setName('Test Title'); // Suponiendo setter
+        $this->title->setId(1);
+        $this->title->setName('Test Title'); 
 
         $this->label = new RecordLabel();
-        $this->label->setName('Test Label'); // Suponiendo setter
+        $this->label->setId(1); 
+        $this->label->setName('Test Label'); 
 
         $this->format = new ProductFormat('LP');
 
@@ -36,6 +38,7 @@ class ProductEditionTest extends TestCase
         $this->productEdition->setFormat($this->format);
         $this->productEdition->setPriceNew(29.99);
         $this->productEdition->setStockNew(100);
+        $this->productEdition->setYear(2000);
     }
 
     public function testGettersAndSetters(): void
@@ -122,23 +125,52 @@ class ProductEditionTest extends TestCase
         $this->assertFalse($tag->getProductEditions()->contains($this->productEdition));
     }
 
-    // public function testToArray(): void
-    // {
-    //     $array = $this->productEdition->toArray();
+    public function testToArray(): void
+    {
+       
+        $array = $this->productEdition->toArray();
 
-    //     $this->assertIsArray($array);
-    //     $this->assertArrayHasKey('id', $array);
-    //     $this->assertArrayHasKey('title', $array);
-    //     $this->assertArrayHasKey('label', $array);
-    //     $this->assertArrayHasKey('year', $array);
-    //     $this->assertArrayHasKey('format', $array);
-    //     $this->assertArrayHasKey('barcode', $array);
-    //     $this->assertArrayHasKey('stockNew', $array);
-    //     $this->assertArrayHasKey('priceNew', $array);
-    //     $this->assertArrayHasKey('tags', $array);
-    //     $this->assertArrayHasKey('images', $array);
-    //     $this->assertArrayHasKey('productUsedItems', $array);
-    //     $this->assertArrayHasKey('artists', $array);
-    //     $this->assertArrayHasKey('tracks', $array);
-    // }
+        $this->assertIsArray($array);
+        $this->assertArrayHasKey('id', $array);
+        $this->assertArrayHasKey('title', $array);
+        $this->assertArrayHasKey('label', $array);
+        $this->assertArrayHasKey('year', $array);
+        $this->assertArrayHasKey('format', $array);
+        $this->assertArrayHasKey('barcode', $array);
+        $this->assertArrayHasKey('stockNew', $array);
+        $this->assertArrayHasKey('priceNew', $array);
+        $this->assertArrayHasKey('tags', $array);
+        $this->assertArrayHasKey('images', $array);
+        $this->assertArrayHasKey('productUsedItems', $array);
+        $this->assertArrayHasKey('artists', $array);
+        $this->assertArrayHasKey('tracks', $array);
+    }
+
+    public function testGetImagesArray(): void
+    {
+        $image1 = new ProductImage('cover.jpg', '/uploads/products/cover.jpg');
+        $image2 = new ProductImage('back.jpg', '/uploads/products/back.jpg');
+        $image1->setId(1);
+        $image2->setId(2);
+
+        $this->productEdition->addImage($image1);
+        $this->productEdition->addImage($image2);
+
+        $expected = [
+            [
+                'id' => 1,
+                'filename' => 'cover.jpg',
+                'url' => '/uploads/products/cover.jpg',
+            ],
+            [
+                'id' => 2,
+                'filename' => 'back.jpg',
+                'url' => '/uploads/products/back.jpg',
+            ],
+        ];
+
+        $result = $this->productEdition->getImagesArray();
+
+        $this->assertEquals($expected, $result);
+    }
 }

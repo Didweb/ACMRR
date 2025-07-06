@@ -99,7 +99,7 @@ class TrackTest extends TestCase
 
         $this->assertIsArray($array['artists']);
         $this->assertCount(1, $array['artists']);
-        $this->assertSame('Artist Name', $array['artists'][0]['name']); // asumiendo toArray() en Artist tiene 'name'
+        $this->assertSame('Artist Name', $array['artists'][0]['name']);
 
         $this->assertSame('Riddim Name', $array['riddim']);
     }

@@ -83,30 +83,30 @@ class ProductTagControllerTest extends WebTestCase
 
     public function testEdit(): void
     {
-       $artist = new ProductTag();
-        $artist->setName('Tag 1 '.time());
-        $this->entityManager->persist($artist);
+        $productTag = new ProductTag();
+        $productTag->setName('Tag 1 '.time());
+        $this->entityManager->persist($productTag);
         $this->entityManager->flush();
 
-        $url = $this->urlGenerator->generate('app_product_product_tag_edit', ['id' => $artist->getId()]);
+        $url = $this->urlGenerator->generate('app_product_product_tag_edit', ['id' => $productTag->getId()]);
         $crawler = $this->client->request('GET', $url);
             $this->assertResponseIsSuccessful();
 
         $token = $crawler->filter('input[name="_token"]')->attr('value');
 
-        $url = $this->urlGenerator->generate('app_record_label_delete', ['id' => $artist->getId()]);
+        $url = $this->urlGenerator->generate('app_product_product_tag_delete', ['id' => $productTag->getId()]);
         $this->client->request('POST', $url, [
             '_method' => 'POST',
             '_token' => $token,
         ]);
 
-        $url = $this->urlGenerator->generate('app_record_label_index');
+        $url = $this->urlGenerator->generate('app_product_product_tag_index');
         $this->assertResponseRedirects($url);
         $this->client->followRedirect();
 
         $deletedArtist = $this->entityManager
             ->getRepository(RecordLabel::class)
-            ->find($artist->getId());
+            ->find($productTag->getId());
 
         $this->assertNull($deletedArtist);
     }

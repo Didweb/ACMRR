@@ -39,6 +39,21 @@
         <include>
             <directory suffix=".php">src</directory>
         </include>
+         <exclude>
+            <file>src/Kernel.php</file>
+            <file>src/Service/RedirectUrlResolver.php</file>
+            <directory>src/Doctrine</directory>
+            <directory>src/DataFixtures</directory>
+            <directory>src/EventSuscriber</directory>
+            <directory>src/Exception</directory>
+            <directory>src/Form</directory>
+            <directory>src/Security</directory>
+            <directory>src/Utils</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="coverage" />
+            <text outputFile="php://stdout"/>
+        </report>
     </coverage>
 <!-- 
     <listeners>

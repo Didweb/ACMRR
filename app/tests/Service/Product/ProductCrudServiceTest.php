@@ -1,7 +1,9 @@
 <?php
 namespace App\Tests\Service\Product;
 
+use App\Entity\ProductImage;
 use App\Entity\ProductTitle;
+use App\Entity\ProductEdition;
 use App\DTO\Product\ProductTitleDto;
 use App\Exception\BusinessException;
 use App\DTO\Product\ProductFilterDto;
@@ -41,8 +43,22 @@ class ProductCrudServiceTest extends KernelTestCase
 
     protected function tearDown(): void
     {
-        $this->em->createQuery('DELETE FROM App\Entity\ProductEdition pe')->execute();
-        $this->em->createQuery('DELETE FROM App\Entity\ProductTitle pt')->execute();
+        // $this->em->createQuery('DELETE FROM App\Entity\ProductEdition pe')->execute();
+        // $this->em->createQuery('DELETE FROM App\Entity\ProductTitle pt')->execute();
+
+        foreach ($this->em->getRepository(ProductImage::class)->findAll() as $image) {
+            $this->em->remove($image);
+        }
+        $this->em->flush();
+
+        foreach ($this->em->getRepository(ProductEdition::class)->findAll() as $edition) {
+            $this->em->remove($edition);
+        }
+        $this->em->flush();
+
+        $this->em->createQuery('DELETE FROM App\Entity\ProductTitle')->execute();
+        $this->em->createQuery('DELETE FROM App\Entity\RecordLabel')->execute();
+        $this->em->createQuery('DELETE FROM App\Entity\Artist')->execute();
 
         $this->em->clear();
         $this->em->close();

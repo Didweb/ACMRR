@@ -13,6 +13,19 @@ class ProductBarcodeTest extends TestCase
         $this->assertSame('4006381333931', $barcode->value());
     }
 
+    public function testValidBarcodeIsError(): void
+    {
+        $this->expectException(BusinessException::class);
+        $barcode = new ProductBarcode('a');
+        
+    }
+
+    public function testValidBarcodeIsAcceptedFromString(): void
+    {
+        $barcode = ProductBarcode::fromString('4006381333931');
+        $this->assertSame('4006381333931', $barcode->value());
+    }
+
     public function testInvalidBarcodeThrowsException(): void
     {
         $this->expectException(BusinessException::class);

@@ -29,7 +29,9 @@ class ProductFormatTest extends TestCase
     public function testToStringReturnsValue(): void
     {
         $pf = new ProductFormat("lp");
-        $this->assertSame("LP", (string)$pf);
+        $stringPf = $pf->__toString();
+        $this->assertSame("LP", $stringPf);
+        $this->assertIsString($stringPf);
     }
 
     public function testEqualsMethod(): void
@@ -41,6 +43,7 @@ class ProductFormatTest extends TestCase
         $this->assertTrue($pf1->equals($pf2));
         $this->assertFalse($pf1->equals($pf3));
     }
+
 
     public function testChoicesReturnProductFormatInstances(): void
     {

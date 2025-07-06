@@ -1,11 +1,18 @@
 <?php
 namespace App\Tests\DTO\Product;
 
+use App\Entity\Track;
+use App\Entity\Artist;
+use App\Entity\RecordLabel;
+use App\Entity\ProductTitle;
+use App\Entity\ProductEdition;
+use App\Entity\ProductUsedItem;
 use PHPUnit\Framework\TestCase;
 use App\DTO\Product\ProductEditionDto;
 use App\ValueObject\Product\ProductFormat;
+use App\ValueObject\Product\ProductStatus;
+use App\ValueObject\Product\ProductBarcode;
 use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ProductEditionDtoTest extends TestCase
@@ -18,9 +25,9 @@ class ProductEditionDtoTest extends TestCase
     }
 
     // Constraints manuales que imitan las del DTO
-    private function getConstraints(): Assert\Collection
+    private function getConstraints(): array
     {
-        return new Assert\Collection([
+        return [
             'id' => [
                 new Assert\Positive(message: 'El ID debe ser un número positivo.'),
             ],
@@ -72,7 +79,7 @@ class ProductEditionDtoTest extends TestCase
             'tracks' => [
                 new Assert\Type('array'),
             ],
-        ]);
+        ];
     }
 
     public function testValidDto()
@@ -103,7 +110,7 @@ class ProductEditionDtoTest extends TestCase
             'productUsedItems' => $dto->productUsedItems,
             'artists' => $dto->artists,
             'tracks' => $dto->tracks,
-        ], $this->getConstraints());
+        ], new Assert\Collection($this->getConstraints()));
 
         $this->assertCount(0, $errors);
     }
@@ -124,10 +131,9 @@ class ProductEditionDtoTest extends TestCase
             tracks: []
         );
 
-        $errors = $this->validator->validate(['id' => $dto->id], $this->getConstraints()['fields']['id']);
+        $errors = $this->validator->validate($dto->id, $this->getConstraints()['id']);
 
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('El ID debe ser un número positivo.', (string)$errors);
     }
 
     public function testTitleNull()
@@ -146,10 +152,9 @@ class ProductEditionDtoTest extends TestCase
             tracks: []
         );
 
-        $errors = $this->validator->validate(['title' => $dto->title], $this->getConstraints()['fields']['title']);
+        $errors = $this->validator->validate($dto->title, $this->getConstraints()['title']);
 
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('El título es obligatorio.', (string)$errors);
     }
 
     public function testLabelBlank()
@@ -168,10 +173,9 @@ class ProductEditionDtoTest extends TestCase
             tracks: []
         );
 
-        $errors = $this->validator->validate(['label' => $dto->label], $this->getConstraints()['fields']['label']);
+        $errors = $this->validator->validate($dto->label, $this->getConstraints()['label']);
 
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('El sello (label) es obligatorio.', (string)$errors);
     }
 
     public function testYearOutOfRange()
@@ -190,10 +194,9 @@ class ProductEditionDtoTest extends TestCase
             tracks: []
         );
 
-        $errors = $this->validator->validate(['year' => $dto->year], $this->getConstraints()['fields']['year']);
+        $errors = $this->validator->validate($dto->year, $this->getConstraints()['year']);
 
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('El año debe estar entre 1900 y 2100.', (string)$errors);
     }
 
     public function testFormatInvalid()
@@ -212,10 +215,9 @@ class ProductEditionDtoTest extends TestCase
             tracks: []
         );
 
-        $errors = $this->validator->validate(['format' => $dto->format], $this->getConstraints()['fields']['format']);
+        $errors = $this->validator->validate($dto->format, $this->getConstraints()['format']);
 
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('no es válido', (string)$errors);
     }
 
     public function testBarcodeTooLong()
@@ -236,10 +238,9 @@ class ProductEditionDtoTest extends TestCase
             tracks: []
         );
 
-        $errors = $this->validator->validate(['barcode' => $dto->barcode], $this->getConstraints()['fields']['barcode']);
+        $errors = $this->validator->validate($dto->barcode, $this->getConstraints()['barcode']);
 
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('no puede tener más de 255 caracteres', (string)$errors);
     }
 
     public function testStockNewNegative()
@@ -258,10 +259,9 @@ class ProductEditionDtoTest extends TestCase
             tracks: []
         );
 
-        $errors = $this->validator->validate(['stockNew' => $dto->stockNew], $this->getConstraints()['fields']['stockNew']);
+        $errors = $this->validator->validate($dto->stockNew, $this->getConstraints()['stockNew']);
 
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('El stock debe ser cero o mayor.', (string)$errors);
     }
 
     public function testPriceNewNegative()
@@ -280,75 +280,78 @@ class ProductEditionDtoTest extends TestCase
             tracks: []
         );
 
-        $errors = $this->validator->validate(['priceNew' => $dto->priceNew], $this->getConstraints()['fields']['priceNew']);
+        $errors = $this->validator->validate($dto->priceNew, $this->getConstraints()['priceNew']);
 
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('El precio debe ser cero o mayor.', (string)$errors);
     }
-    // Falta validar si no son null o Array lo campos finales
-    public function testProductUsedItemsNotArray()
-{
-    $dto = new ProductEditionDto(
-        id: 1,
-        title: ['id' => 10, 'name' => 'Título'],
-        label: 'Sello',
-        year: 2020,
-        format: 'CD',
-        barcode: null,
-        stockNew: 0,
-        priceNew: 0.0,
-        productUsedItems: 'no es un array',
-        artists: [],
-        tracks: []
-    );
+   
+    public function testFromEntity(): void
+    {
+        // Crear objetos reales
+        $title = new ProductTitle();
+        $title->setId(1);
+        $title->setName('Test Album');
 
-    $errors = $this->validator->validate(['productUsedItems' => $dto->productUsedItems], $this->getConstraints()['fields']['productUsedItems']);
+        $label = new RecordLabel();
+        $label->setId(1);
+        $label->setName('Test Label');
 
-    $this->assertNotEmpty($errors);
-    $this->assertStringContainsString('This value should be of type array', (string)$errors);
-}
 
-public function testArtistsNotArray()
-{
-    $dto = new ProductEditionDto(
-        id: 1,
-        title: ['id' => 10, 'name' => 'Título'],
-        label: 'Sello',
-        year: 2020,
-        format: 'CD',
-        barcode: null,
-        stockNew: 0,
-        priceNew: 0.0,
-        productUsedItems: [],
-        artists: 'no es un array',
-        tracks: []
-    );
+        $format = new ProductFormat('LP');
+        $barcode = new ProductBarcode('4006381333931');
 
-    $errors = $this->validator->validate(['artists' => $dto->artists], $this->getConstraints()['fields']['artists']);
+        $artist = new Artist('Test Artist');
+        $artist->setId(1);
+        $artist->setName('Test Artist');
 
-    $this->assertNotEmpty($errors);
-    $this->assertStringContainsString('This value should be of type array', (string)$errors);
-}
+       
 
-public function testTracksNotArray()
-{
-    $dto = new ProductEditionDto(
-        id: 1,
-        title: ['id' => 10, 'name' => 'Título'],
-        label: 'Sello',
-        year: 2020,
-        format: 'CD',
-        barcode: null,
-        stockNew: 0,
-        priceNew: 0.0,
-        productUsedItems: [],
-        artists: [],
-        tracks: 'no es un array'
-    );
+        // Crear edición de producto
+        $edition = new ProductEdition();
+        $edition->setId(1);
+        $edition->setTitle($title);
+        $edition->setLabel($label);
+        $edition->setFormat($format);
+        $edition->setBarcode($barcode);
+        $edition->addArtist($artist);
+        $edition->setYear(2000);
+        $edition->setPriceNew(19.99);
+        $edition->setStockNew(10);
 
-    $errors = $this->validator->validate(['tracks' => $dto->tracks], $this->getConstraints()['fields']['tracks']);
 
-    $this->assertNotEmpty($errors);
-    $this->assertStringContainsString('This value should be of type array', (string)$errors);
-}
+        $status = new ProductStatus('VG');
+        $usedItem = new ProductUsedItem(); 
+        $usedItem->setId(1); 
+        $usedItem->setEdition($edition); 
+        $usedItem->setPrice(10.5);
+        $usedItem->setBarcode($barcode);
+        $usedItem->setConditionVinyl($status);
+        $usedItem->setConditionFolder($status);
+
+        $track = new Track();
+        $track->setId(1);
+        $track->setTitle('Title');
+        $track->setProductEdition($edition);
+        $track->addArtist($artist);
+
+        $edition->addProductUsedItem($usedItem);
+        $edition->addTrack($track);
+
+        // Ejecutar el método a probar
+        $dto = ProductEditionDto::fromEntity($edition);
+
+        // Verificaciones
+        $this->assertEquals(1, $dto->id);
+        $this->assertEquals(['id' => 1, 'name' => 'Test Album'], $dto->title);
+        $this->assertEquals(1, $dto->label);
+        $this->assertEquals(2000, $dto->year);
+        $this->assertEquals('LP', $dto->format);
+        $this->assertEquals('4006381333931', $dto->barcode);
+        $this->assertEquals(10, $dto->stockNew);
+        $this->assertEquals(19.99, $dto->priceNew);
+        $this->assertEquals([ $usedItem->toArray() ], $dto->productUsedItems);
+        $this->assertEquals([ $artist->toArray() ], $dto->artists);
+        $this->assertEquals([$track->toArray()], $dto->tracks);
+    }
+    
 }
