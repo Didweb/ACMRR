@@ -29,7 +29,7 @@ class ProductUsedItem
     #[ORM\Column(type:"float")]
     private float $price;   
 
-    #[ORM\OneToMany(mappedBy: 'productItemUsed', targetEntity: ProductImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'productUsedItem', targetEntity: ProductImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $images;
 
     public function __construct()

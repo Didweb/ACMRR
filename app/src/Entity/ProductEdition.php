@@ -14,7 +14,7 @@ class ProductEdition
     private ?int $id  = null;
 
     #[ORM\ManyToOne(targetEntity: ProductTitle::class, inversedBy: "editions")]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?ProductTitle $title = null;
 
     #[ORM\ManyToOne(targetEntity: RecordLabel::class)]
