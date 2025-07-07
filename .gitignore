@@ -13,6 +13,7 @@ app/public/bundles/
 app/public/barcodes/*.png
 app/var/
 app/vendor/
+app/coverage/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

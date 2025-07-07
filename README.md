@@ -13,7 +13,7 @@ docker exec -it acmrr-php bash
 Ejecutar todos los test...
 
 ```bash
-./vendor/bin/phpunit
+php bin/phpunit --coverage-html coverage/
 ```
 
 Por suites:
