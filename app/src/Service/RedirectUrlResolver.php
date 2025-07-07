@@ -29,6 +29,11 @@ class RedirectUrlResolver
             return $this->urlGenerator->generate('app_product_crud_index');
         }
 
+        if (str_starts_with($path, '/admin/riddim')) {
+            return $this->urlGenerator->generate('app_riddim_index');
+        }
+
+
 
         if (str_starts_with($path, '/admin')) {
             return $this->urlGenerator->generate('app_home_dashboard');

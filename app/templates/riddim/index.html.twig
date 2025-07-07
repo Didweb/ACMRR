@@ -1,18 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Artist index{% endblock %}
+{% block title %}Listado de Riddims{% endblock %}
 
 {% block body %}
 <div class="container my-4">
     {% include 'partials/_alert_messages.html.twig' %}
     <div class="row mb-3">
         <div class="col">
-            <h1>Listado de Artistas</h1>
-       </div>
+            <h1>Riddims</h1>
+        </div>
         <div class="col text-end">
-            <a href="{{ path('app_artist_crud_new') }}" class="btn btn-primary">+ Nuevo Artísta</a>
+            <a href="{{ path('app_riddim_new') }}" class="btn btn-primary">+ Nuevo Riddim</a>
         </div>
     </div>
+
 
     <div class="row">
         <div class="col">
@@ -27,27 +28,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                        {% for artist in pagination %}
+                        {% for riddim in pagination %}
                             <tr>
-                                <td>{{ artist.id }}</td>
-                                <td>{{ artist.name }}</td>
+                                <td>{{ riddim.id }}</td>
+                                <td>{{ riddim.name }}</td>
                                 <td>
-                                    <a href="{{ path('app_artist_crud_edit', {'id': artist.id}) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                                    <a href="{{ path('app_riddim_edit', {'id': riddim.id}) }}" class="btn btn-sm btn-outline-primary">edit</a>
                                 </td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="3">No hay Artistas registrados.</td>
+                                <td colspan="3">No hay Riddims registrados.</td>
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
-                <div class="navigation mt-3  d-flex justify-content-end">
-                    {{ knp_pagination_render(pagination) }}
-                </div>
+                    <div class="navigation mt-3  d-flex justify-content-end">
+                        {{ knp_pagination_render(pagination) }}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>   
+</div>  
+    
 {% endblock %}
