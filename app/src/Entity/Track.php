@@ -11,11 +11,14 @@ class Track
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: "integer")]
     private ?int $id = null;
 
+    #[ORM\Column(type: "string", length: 10, nullable: true)]
+    private ?string $position = null;
+
     #[ORM\Column(type: "string", length: 255)]
     private string $title;
 
     #[ORM\ManyToOne(targetEntity: ProductEdition::class, inversedBy: "tracks")]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?ProductEdition $productEdition = null;
 
     #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: "tracks")]
@@ -40,6 +43,17 @@ class Track
     {
         $this->id = $id;
 
+        return $this;
+    }
+
+    public function getPosition(): ?string
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?string $position): self
+    {
+        $this->position = $position;
         return $this;
     }
 
