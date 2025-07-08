@@ -1,6 +1,7 @@
 <?php
 namespace App\DTO\Riddim;
 
+use App\Entity\Riddim;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class RiddimDto
@@ -22,4 +23,13 @@ class RiddimDto
         #[Assert\Type('array', message: 'Las ediciones deben ser un array.')]
         public readonly array $tracks
     ) {}
+
+    public static function fromEntity(Riddim $riddim): self 
+    {
+        return new self(
+            $riddim->getId(),
+            $riddim->getName(),
+            $riddim->getTracks()->toArray()
+        );
+    }
 }

@@ -62,13 +62,15 @@ final class RiddimController extends AbstractController
 
 
     #[Route('/{id}/edit', name: 'app_riddim_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Riddim $riddim, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Riddim $riddim): Response
     {
         $form = $this->createForm(RiddimForm::class, $riddim);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+
+            $riddimDto = new RiddimDto($riddim->getId(), $riddim->getName(), $riddim->getTracks()->toArray());
+            $riddim = $this->riddimCrudService->save($riddimDto);
 
             return $this->redirectToRoute('app_riddim_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -79,12 +81,11 @@ final class RiddimController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_riddim_delete', methods: ['POST'])]
-    public function delete(Request $request, Riddim $riddim, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_riddim_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function delete(Request $request, Riddim $riddim): Response
     {
         if ($this->isCsrfTokenValid('delete'.$riddim->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($riddim);
-            $entityManager->flush();
+            $this->riddimCrudService->delete($riddim->getId());
         }
 
         return $this->redirectToRoute('app_riddim_index', [], Response::HTTP_SEE_OTHER);

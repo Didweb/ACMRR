@@ -65,4 +65,41 @@ class RiddimCrudService
                 tracks: $riddim->getTracks()->toArray()
         );
     }
+
+
+    public function save(RiddimDto $riddimDto): RiddimDto
+    {
+        $riddim = $this->riddimRepository->find($riddimDto->id);
+
+        if (!$riddim) {
+            throw new BusinessException('No existe el riddim.');
+        }
+
+        try {
+            $riddim->setName($riddimDto->name);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+            throw new BusinessException('Error al actualizar riddim. Error en la presistencia. Message:'.$e->getMessage());
+        }
+
+        return RiddimDto::fromEntity($riddim);
+    }
+
+    public function delete(int $id): void
+    {
+        $riddim = $this->riddimRepository->find($id);
+
+        if (!$riddim) {
+            throw new BusinessException('No existe el riddim.');
+        }
+
+        try {
+            $this->em->remove($riddim);
+            $this->em->flush();
+
+        } catch(\Exception $e) {
+            throw new BusinessException('Error al eliminar riddim. Error en la presistencia. Message:'.$e->getMessage());
+        }
+    }
 }

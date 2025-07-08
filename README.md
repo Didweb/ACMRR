@@ -13,7 +13,7 @@ docker exec -it acmrr-php bash
 Ejecutar todos los test...
 
 ```bash
-php bin/phpunit --coverage-html coverage/
+APP_ENV=test ./vendor/bin/phpunit  --coverage-html coverage/ 
 ```
 
 Por suites:
@@ -31,4 +31,10 @@ Por suites:
 
 ```bash
 ./vendor/bin/phpunit --testsuite Entity
+```
+
+### Ver el coverage
+
+```bash
+http://localhost/coverage/index.html
 ```

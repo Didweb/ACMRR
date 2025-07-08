@@ -117,6 +117,7 @@ class Track
         return [
             'id' => $this->getId() ?? null,
             'title' => $this->getTitle(),
+            'position' => $this->getPosition(),
             'artists' => $this->artists->map(
                             fn(Artist $artist) => $artist->toArray()
                         )->toArray(),
